@@ -46,8 +46,23 @@ path {
   line-height: 1;
 }
 
-text {
+svg,
+svg > * {
   -webkit-transform-origin: center;
+  -ms-transform-origin: center;
+      transform-origin: center;
+-webkit-animation-name: spinning;
+      animation-name: spinning;
+-webkit-animation-duration: 60s;
+      animation-duration: 60s;
+-webkit-animation-iteration-count: infinite;
+      animation-iteration-count: infinite;
+-webkit-animation-timing-function: linear;
+      animation-timing-function: linear;
+}
+
+text {
+  /* -webkit-transform-origin: center;
       -ms-transform-origin: center;
           transform-origin: center;
   -webkit-animation-name: spinning;
@@ -57,18 +72,14 @@ text {
   -webkit-animation-iteration-count: infinite;
           animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
-          animation-timing-function: linear;
+          animation-timing-function: linear; */
   -webkit-transition: all;
   -o-transition: all;
   transition: all;
+  transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
 }
-
-/* svg:hover {
-  cursor: wait;
-}
-svg:hover text {
-  animation-name: spinning;
-} */
 
 #text-1 {
   fill: var(--text-1);
@@ -90,47 +101,55 @@ svg:hover text {
 }
 
 @-webkit-keyframes spinning {
-  from {
-    -webkit-transform: roate(0deg);
-            transform: roate(0deg);
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
   }
-  to {
+  100% {
     -webkit-transform: rotate(-360deg);
             transform: rotate(-360deg);
   }
 }
 
 @keyframes spinning {
-  from {
-    -webkit-transform: roate(0deg);
-            transform: roate(0deg);
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
   }
-  to {
+  100% {
     -webkit-transform: rotate(-360deg);
             transform: rotate(-360deg);
   }
 }
 
-@-webkit-keyframes fading {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.32;
-  }
-  100% {
-    opacity: 0;
-  }
+h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 5px;
+}
+h5 {
+  text-align: center;
+  color: gray;
 }
 
-@keyframes fading {
-  0% {
-    opacity: 0;
+.chrome-only {
+  display: none;
+}
+.safari-only {
+  display: inline;
+}
+
+@supports(-webkit-tap-highlight-color: black) {
+  /* Matches Edge 12 - latest (92) */
+  /* Matches Chrome 16 - latest (95) */
+  /* Matches Opera 15 - latest (78) */
+
+  /* does not match Safari */
+  /* does not match Firefox */
+  .chrome-only {
+    display: inline;
   }
-  50% {
-    opacity: 0.32;
-  }
-  100% {
-    opacity: 0;
+  .safari-only {
+    display: none;
   }
 }

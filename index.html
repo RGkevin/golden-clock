@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Golden Clock - Kevin López</title>
+    <title>The Golden Clock - Tetragrammaton inside the Fibonacci Sequence</title>
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
+    <section>
+      <h1>The Golden Clock</h1>
+      <h5>Kevin López</h5>
+    </section>
     <section>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <path
@@ -82,7 +86,9 @@
           font-weight="normal"
           textLength="233"
         >
-          <textPath id="text-path-1" href="#circle-1">055055055055</textPath>
+          <textPath textLength="233" id="text-path-1" href="#circle-1">
+            055055055055
+          </textPath>
         </text>
         <text
           id="text-2"
@@ -91,7 +97,7 @@
           font-weight="normal"
           textLength="219"
         >
-          <textPath id="text-path-2" href="#circle-2">
+          <textPath textLength="219" id="text-path-2" href="#circle-2">
             &nbsp;1123&nbsp;8314&nbsp;9437&nbsp;7741&nbsp;6178&nbsp;3819&nbsp;9987&nbsp;2796&nbsp;1673&nbsp;3369&nbsp;4932&nbsp;7291
           </textPath>
         </text>
@@ -102,7 +108,7 @@
           font-weight="normal"
           textLength="183"
         >
-          <textPath id="text-path-3" href="#circle-3">
+          <textPath textLength="183" id="text-path-3" href="#circle-3">
             &nbsp;7&nbsp;7&nbsp;5&nbsp;1&nbsp;4&nbsp;3&nbsp;6&nbsp;6&nbsp;8&nbsp;3&nbsp;9&nbsp;1
           </textPath>
         </text>
@@ -113,7 +119,7 @@
           font-weight="normal"
           textLength="139"
         >
-          <textPath id="text-path-4" href="#circle-4">
+          <textPath textLength="139" id="text-path-4" href="#circle-4">
             &nbsp;1&nbsp;8&nbsp;2&nbsp;4
           </textPath>
         </text>
@@ -124,7 +130,7 @@
           font-weight="normal"
           textLength="122"
         >
-          <textPath id="text-path-5" href="#circle-5">
+          <textPath textLength="122" id="text-path-5" href="#circle-5">
             6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </textPath>
         </text>
@@ -135,11 +141,17 @@
           font-weight="normal"
           textLength="57"
         >
-          <textPath id="text-path-6" href="#circle-6">
+          <textPath class="chrome-only" textLength="57" id="text-path-6" href="#circle-6">
             ה&nbsp;י&nbsp;ה&nbsp;ו&nbsp;
+          </textPath>
+          <textPath startOffset="5" class="safari-only" textLength="59" id="text-path-6" href="#circle-6">
+            &nbsp;ה&nbsp;י&nbsp;ה&nbsp;ו
           </textPath>
         </text>
       </svg>
+    </section>
+    <section>
+        <p>I found the <a href="https://en.wikipedia.org/wiki/Tetragrammaton">tetragrammaton</a> inside the fibonacci sequence. See the explanation <a href="https://github.com/RGkevin/golden-clock">here</a></p>
     </section>
   </body>
 </html>
