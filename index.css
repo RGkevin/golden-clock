@@ -1,3 +1,8 @@
+/*
+* Made by Kevin López
+* I've been studying occultism and I like to share my discoveries
+*/
+
 :root {
   --background-0: black;
   /* Surfaces */
@@ -12,10 +17,12 @@
 *,
 *:after,
 *:before {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 body {
+  display: -ms-grid;
   display: grid;
   place-items: center;
   min-height: 100vh;
@@ -40,11 +47,19 @@ path {
 }
 
 text {
-  transform-origin: center;
-  animation-name: spinning;
-  animation-duration: 60s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+  -webkit-transform-origin: center;
+      -ms-transform-origin: center;
+          transform-origin: center;
+  -webkit-animation-name: spinning;
+          animation-name: spinning;
+  -webkit-animation-duration: 60s;
+          animation-duration: 60s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+  -webkit-transition: all;
+  -o-transition: all;
   transition: all;
 }
 
@@ -74,12 +89,37 @@ svg:hover text {
   fill: var(--text-6);
 }
 
-@keyframes spinning {
+@-webkit-keyframes spinning {
   from {
-    transform: roate(0deg);
+    -webkit-transform: roate(0deg);
+            transform: roate(0deg);
   }
   to {
-    transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg);
+            transform: rotate(-360deg);
+  }
+}
+
+@keyframes spinning {
+  from {
+    -webkit-transform: roate(0deg);
+            transform: roate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(-360deg);
+            transform: rotate(-360deg);
+  }
+}
+
+@-webkit-keyframes fading {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.32;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
