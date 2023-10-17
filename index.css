@@ -1,0 +1,96 @@
+:root {
+  --background-0: black;
+  /* Surfaces */
+  --text-1: green;
+  --text-2: orange;
+  --text-3: skyblue;
+  --text-4: blue;
+  --text-5: white;
+  --text-6: var(--text-5);
+}
+
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  font-family: "Google Sans", sans-serif, system-ui;
+  overflow: hidden;
+  background: var(--background-0);
+  color: var(--text-1);
+}
+
+svg {
+  width: 80vmin;
+  overflow: visible;
+}
+
+path {
+  opacity: 0.1;
+}
+
+.dg :is(.cr.string, .cr.number) input[type="text"] {
+  color: white;
+  line-height: 1;
+}
+
+text {
+  transform-origin: center;
+  animation-name: spinning;
+  animation-duration: 60s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  transition: all;
+}
+
+/* svg:hover {
+  cursor: wait;
+}
+svg:hover text {
+  animation-name: spinning;
+} */
+
+#text-1 {
+  fill: var(--text-1);
+}
+#text-2 {
+  fill: var(--text-2);
+}
+#text-3 {
+  fill: var(--text-3);
+}
+#text-4 {
+  fill: var(--text-4);
+}
+#text-5 {
+  fill: var(--text-5);
+}
+#text-6 {
+  fill: var(--text-6);
+}
+
+@keyframes spinning {
+  from {
+    transform: roate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes fading {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.32;
+  }
+  100% {
+    opacity: 0;
+  }
+}
