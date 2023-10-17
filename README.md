@@ -3,7 +3,7 @@
 
   
 
-I found the [tetragrammaton](https://en.wikipedia.org/wiki/Tetragrammaton) word `YHVH (6 5 6 10)` inside the **Fibonacci sequence**.
+I found the [tetragrammaton](https://en.wikipedia.org/wiki/Tetragrammaton) word `YHVH (6 5 6 10)` inside the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence).
 
 Using [modular arithmetic](https://brilliant.org/wiki/modular-arithmetic/) with `modulo 10` the fibonacci sequence has a 60 numbers repeat pattern.
 
