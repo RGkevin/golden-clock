@@ -1,0 +1,34 @@
+{
+  "name": "golden-clock",
+  "version": "0.1.0",
+  "description": "The Golden Clock - Kevin López",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "http-server -o ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RGkevin/golden-clock.git"
+  },
+  "keywords": [
+    "fibonacci",
+    "sequence",
+    "golden",
+    "clock",
+    "tetragrammaton",
+    "gematria",
+    "occultism",
+    "modular",
+    "arithmetic"
+  ],
+  "author": "Kevin López",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RGkevin/golden-clock/issues"
+  },
+  "homepage": "https://github.com/RGkevin/golden-clock#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

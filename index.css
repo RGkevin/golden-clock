@@ -53,8 +53,8 @@ svg > * {
       transform-origin: center;
 -webkit-animation-name: spinning;
       animation-name: spinning;
--webkit-animation-duration: 60s;
-      animation-duration: 60s;
+-webkit-animation-duration: 600s;
+      animation-duration: 300s;
 -webkit-animation-iteration-count: infinite;
       animation-iteration-count: infinite;
 -webkit-animation-timing-function: linear;
@@ -100,6 +100,10 @@ text {
   fill: var(--text-6);
 }
 
+.text-center {
+  text-align: center;
+}
+
 @-webkit-keyframes spinning {
   0% {
     -webkit-transform: rotate(0deg);
@@ -129,7 +133,7 @@ h1 {
 }
 h5 {
   text-align: center;
-  color: gray;
+  color: grey;
 }
 
 .chrome-only {

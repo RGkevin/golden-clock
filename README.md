@@ -50,4 +50,4 @@ Now you start summing starting from number 8, and then apply modulo 9 except for
 
 There you go, the `tetragrammaton` inside fibonacci sequence.
 
-I made this discovery during the pandemic 2020.
+I made this discovery during the 2020 quarantine.
