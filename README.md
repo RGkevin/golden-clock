@@ -22,7 +22,7 @@ has the corresponding values `5 6 5 10`.
 |---|---|---|----|
 | 5 | 6 | 5 | 10 |
 
-Using [modular arithmetic](https://brilliant.org/wiki/modular-arithmetic/) with `modulo 10` the fibonacci sequence has a [60 numbers repeat pattern](https://www.goldennumber.net/fibonacci-60-repeating-pattern/).
+Using [modular arithmetic](https://brilliant.org/wiki/modular-arithmetic/) with `modulo 10` the fibonacci sequence has a [60 repeating pattern](https://www.goldennumber.net/fibonacci-60-repeating-pattern/).
 
 | 0 | 1 | 1 | 2 | 3 | 5 | 8 | 3 | 1 | 4 | 5 | 9 | 4 | 3 | 7 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
