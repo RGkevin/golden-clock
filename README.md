@@ -89,4 +89,4 @@ I made this discovery during the 2020 quarantine.
 I've discovered more properties in this fibonacci sequence using modular arithmetics and even found a curious relation with the prime numbers.
 But I'm still working on a mathematical proof. Thanks for reading.
 
-Kevin López | Copyright
+Copyright Kevin López | 2023
