@@ -1,7 +1,19 @@
+<div align="center">
+  <br>
+  <a href="https://rgkevin.github.io/golden-clock/">
+    <img src="assets/tetragrama.png" alt="Logo" width="563" height="260">
+  </a>
 
-# The Golden Clock
+<h1 align="center">The Golden Clock</h1>
+  <p align="center">
+    I found the <a href="https://en.wikipedia.org/wiki/Tetragrammaton"><strong>tetragrammaton</strong></a> word <strong>YHVH (5 6 5 10)</strong> inside the <a href="https://en.wikipedia.org/wiki/Fibonacci_sequence">Fibonacci Sequence</a>.
+    <br />
+  </p>
+</div>
 
-I found the [tetragrammaton](https://en.wikipedia.org/wiki/Tetragrammaton) word `YHVH (5 6 5 10)` inside the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence).
+<div>
+<img src="assets/hebrew-alphabet.jpg" alt="Hebrew alphabet">
+</div>
 
 According to hebrew gematry each letter of the Hebrew alphabet has a numerical value and the name of god `יהוה`
 has the corresponding values `5 6 5 10`.
