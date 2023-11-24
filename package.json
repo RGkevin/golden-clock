@@ -1,6 +1,6 @@
 {
   "name": "golden-clock",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "The Golden Clock - Kevin López",
   "main": "index.js",
   "scripts": {

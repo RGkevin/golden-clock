@@ -1,11 +1,9 @@
 /*
 * Made by Kevin López
-* I've been studying occultism and I like to share my discoveries
 */
 
 :root {
   --background-0: black;
-  /* Surfaces */
   --text-1: green;
   --text-2: orange;
   --text-3: skyblue;
@@ -139,21 +137,24 @@ h5 {
 .chrome-only {
   display: none;
 }
+.mobile-safari-only {
+  display: none;
+}
 .safari-only {
-  display: inline;
+  display: none;
 }
 
-@supports(-webkit-tap-highlight-color: black) {
-  /* Matches Edge 12 - latest (92) */
-  /* Matches Chrome 16 - latest (95) */
-  /* Matches Opera 15 - latest (78) */
+/*@supports(-webkit-tap-highlight-color: black) {*/
+/*  !* Matches Edge 12 - latest (92) *!*/
+/*  !* Matches Chrome 16 - latest (95) *!*/
+/*  !* Matches Opera 15 - latest (78) *!*/
 
-  /* does not match Safari */
-  /* does not match Firefox */
-  .chrome-only {
-    display: inline;
-  }
-  .safari-only {
-    display: none;
-  }
-}
+/*  !* does not match Safari *!*/
+/*  !* does not match Firefox *!*/
+/*  .chrome-only {*/
+/*    display: inline;*/
+/*  }*/
+/*  .safari-only {*/
+/*    display: none;*/
+/*  }*/
+/*}*/
