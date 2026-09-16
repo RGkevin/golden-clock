@@ -44,19 +44,35 @@ path {
   line-height: 1;
 }
 
-svg,
-svg > * {
+/*
+* The whole dial spins as a single rigid group, so every ring shares one
+* animation and can never drift out of phase with the others.
+*/
+svg {
   -webkit-transform-origin: center;
   -ms-transform-origin: center;
       transform-origin: center;
--webkit-animation-name: spinning;
-      animation-name: spinning;
--webkit-animation-duration: 600s;
-      animation-duration: 300s;
--webkit-animation-iteration-count: infinite;
-      animation-iteration-count: infinite;
--webkit-animation-timing-function: linear;
-      animation-timing-function: linear;
+  -webkit-animation-name: spinning;
+          animation-name: spinning;
+  -webkit-animation-duration: 150s;
+          animation-duration: 150s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+}
+
+/*
+* Anchor every ring to the viewBox centre (50,50). Without this, `center`
+* resolves against each element's own bounding box, so the rings would pivot
+* around different points and slide out of alignment.
+*/
+svg > * {
+  -webkit-transform-box: view-box;
+          transform-box: view-box;
+  -webkit-transform-origin: 50% 50%;
+      -ms-transform-origin: 50% 50%;
+          transform-origin: 50% 50%;
 }
 
 text {
