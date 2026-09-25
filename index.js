@@ -111,6 +111,51 @@ for (let i = 0; i < 12; i++) {
   segmentLabels.append(label);
 }
 
+// ── Anillo 2: 4 segmentos grandes ─────────────────────────
+// Ancho: 4 (radio 24-28), mismo que anillo 1.
+const ring2Arcs = document.querySelector('#ring2-arcs');
+const ring2Segments = document.querySelector('#ring2-segments');
+const ring2Labels = document.querySelector('#ring2-labels');
+const RING2_IN = 24;
+const RING2_OUT = 28;
+const RING2_MID = (RING2_IN + RING2_OUT) / 2;
+
+// Segmentos identificados por número: 2, 9, 3, 5
+// Índices de línea para cada segmento
+const segments2 = [
+  { name: 2, startIdx: 1, endIdx: 15 },
+  { name: 9, startIdx: 16, endIdx: 30 },
+  { name: 3, startIdx: 31, endIdx: 45 },
+  { name: 5, startIdx: 46, endIdx: 60 }
+];
+
+for (const seg of segments2) {
+  // Crear arcos (líneas del anillo)
+  const arc = mk('path');
+  arc.setAttribute('d', segmentPath(posRad(seg.startIdx), posRad(seg.endIdx % 60), RING2_IN, RING2_OUT));
+  arc.setAttribute('class', 'ring2-arc');
+  ring2Arcs.append(arc);
+
+  // Crear segmento (relleno)
+  const segment = mk('path');
+  segment.setAttribute('d', segmentPath(posRad(seg.startIdx), posRad(seg.endIdx % 60), RING2_IN, RING2_OUT));
+  segment.setAttribute('class', 'ring2-segment');
+  ring2Segments.append(segment);
+
+  // Suma de dígitos Fibonacci entre estos índices
+  const sliceEnd = seg.endIdx === 60 ? 60 : seg.endIdx;
+  const value = digitalRoot(fib.slice(seg.startIdx, sliceEnd).reduce((sum, digit) => sum + digit, 0));
+  const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
+  const [x, y] = pt(RING2_MID, labelAngle);
+  const label = mk('text');
+  label.setAttribute('x', x.toFixed(3));
+  label.setAttribute('y', y.toFixed(3));
+  label.setAttribute('transform', `rotate(${(90 - (labelAngle * 180 / Math.PI)).toFixed(2)},${x.toFixed(3)},${y.toFixed(3)})`);
+  label.setAttribute('class', 'ring2-label');
+  label.textContent = value;
+  ring2Labels.append(label);
+}
+
 // ── Control de animación ──────────────────────────────────
 const dial = document.querySelector('svg');
 const animationToggle = document.querySelector('#animation-toggle');
