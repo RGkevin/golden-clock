@@ -1,0 +1,11 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+setup = "npm ci"
+run_mode = "concurrent"
+
+[scripts.run.dev]
+available_in = ["local"]
+command = 'npm exec -- http-server . -a 0.0.0.0 -p "${CONDUCTOR_PORT:-8080}" -c-1'
+default = true
+icon = "play"

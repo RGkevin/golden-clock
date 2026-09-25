@@ -1,40 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Golden Clock - Tetragrammaton inside the Fibonacci Sequence</title>
+    <title>El Reloj Áureo - El tetragrámaton en la sucesión de Fibonacci</title>
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
     <section>
-      <h1>The Golden Clock</h1>
+      <h1>El Reloj Áureo</h1>
       <h5>Kevin López</h5>
+      <label class="animation-control">
+        <span>Animación</span>
+        <input id="animation-toggle" type="checkbox" role="switch" checked />
+        <span class="switch-track" aria-hidden="true"></span>
+      </label>
     </section>
     <section>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <path
-          id="circle-1"
-          fill="none"
-          stroke-width="0"
-          stroke="white"
-          d="
-                M 10, 50
-                a 40,40 0 1,1 80,0
-                a 40,40 0 1,1 -80,0
-              "
-        />
-        <path
-          id="circle-2"
-          fill="none"
-          stroke-width="0"
-          stroke="white"
-          d="
-          M 15 50
-          a 10,10 0 1,1 70,0
-          a 20,20 0 1,1 -70,0
-        "
-        />
         <path
           id="circle-3"
           fill="none"
@@ -79,28 +62,7 @@
           a 10,10 0 1,1 -20,0
         "
         />
-        <text
-          id="text-1"
-          font-family="monospace"
-          font-size="3"
-          font-weight="normal"
-          textLength="233"
-        >
-          <textPath textLength="233" id="text-path-1" href="#circle-1">
-            055055055055
-          </textPath>
-        </text>
-        <text
-          id="text-2"
-          font-family="monospace"
-          font-size="4"
-          font-weight="normal"
-          textLength="219"
-        >
-          <textPath textLength="219" id="text-path-2" href="#circle-2">
-            &nbsp;1123&nbsp;8314&nbsp;9437&nbsp;7741&nbsp;6178&nbsp;3819&nbsp;9987&nbsp;2796&nbsp;1673&nbsp;3369&nbsp;4932&nbsp;7291
-          </textPath>
-        </text>
+        <g id="fibonacci-ring" data-ring-index="4" aria-label="Sucesión de Fibonacci módulo 10: 60 segmentos"></g>
         <text
           id="text-3"
           font-family="monospace"
@@ -151,7 +113,7 @@
       </svg>
     </section>
     <section>
-      <p class="text-center">I found the <a href="https://en.wikipedia.org/wiki/Tetragrammaton">tetragrammaton</a> inside the fibonacci sequence. See the explanation <a href="https://github.com/RGkevin/golden-clock">here</a>.</p>
+      <p class="text-center">Encontré el <a href="https://es.wikipedia.org/wiki/Tetragrámaton">tetragrámaton</a> en la sucesión de Fibonacci. Consulta la explicación <a href="https://github.com/RGkevin/golden-clock">aquí</a>.</p>
       <p class="text-center">v0.2.4</p>
     </section>
   </body>

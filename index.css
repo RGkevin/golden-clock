@@ -1,5 +1,5 @@
 /*
-* Made by Kevin López
+* Creado por Kevin López
 */
 
 :root {
@@ -25,7 +25,7 @@ body {
   place-items: center;
   min-height: 100vh;
   font-family: "Google Sans", sans-serif, system-ui;
-  overflow: hidden;
+  overflow-x: hidden;
   background: var(--background-0);
   color: var(--text-1);
 }
@@ -44,28 +44,68 @@ path {
   line-height: 1;
 }
 
-/*
-* The whole dial spins as a single rigid group, so every ring shares one
-* animation and can never drift out of phase with the others.
-*/
+/* Girar el reloj completo para mantener todos los anillos alineados. */
 svg {
-  -webkit-transform-origin: center;
-  -ms-transform-origin: center;
-      transform-origin: center;
-  -webkit-animation-name: spinning;
-          animation-name: spinning;
-  -webkit-animation-duration: 150s;
-          animation-duration: 150s;
-  -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-          animation-timing-function: linear;
+  transform-origin: center;
+}
+
+.animation-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  color: #d6d6d6;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+}
+
+.animation-control input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switch-track {
+  width: 42px;
+  height: 24px;
+  border: 1px solid #666;
+  border-radius: 999px;
+  background: #262626;
+  transition: background 200ms, border-color 200ms;
+}
+
+.switch-track::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 3px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 200ms;
+}
+
+.animation-control input:checked + .switch-track {
+  background: var(--text-1);
+  border-color: var(--text-1);
+}
+
+.animation-control input:checked + .switch-track::before {
+  transform: translateX(18px);
+}
+
+.animation-control input:focus-visible + .switch-track {
+  outline: 2px solid white;
+  outline-offset: 4px;
 }
 
 /*
-* Anchor every ring to the viewBox centre (50,50). Without this, `center`
-* resolves against each element's own bounding box, so the rings would pivot
-* around different points and slide out of alignment.
+* Anclar cada anillo al centro del viewBox (50,50). Sin esto, `center`
+* se calcula con los límites de cada elemento y los anillos giran
+* alrededor de puntos distintos, perdiendo su alineación.
 */
 svg > * {
   -webkit-transform-box: view-box;
@@ -95,11 +135,23 @@ text {
   -ms-transform: rotate(0deg);
 }
 
-#text-1 {
-  fill: var(--text-1);
+#fibonacci-ring text {
+  font-family: monospace;
+  font-size: 3px;
+  text-anchor: middle;
+  dominant-baseline: central;
 }
-#text-2 {
+
+.fibonacci-digit {
   fill: var(--text-2);
+}
+
+.fibonacci-five {
+  fill: var(--text-3);
+}
+
+.fibonacci-zero {
+  fill: var(--text-1);
 }
 #text-3 {
   fill: var(--text-3);
@@ -116,28 +168,6 @@ text {
 
 .text-center {
   text-align: center;
-}
-
-@-webkit-keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
-}
-
-@keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
 }
 
 h1 {
@@ -161,12 +191,12 @@ h5 {
 }
 
 /*@supports(-webkit-tap-highlight-color: black) {*/
-/*  !* Matches Edge 12 - latest (92) *!*/
-/*  !* Matches Chrome 16 - latest (95) *!*/
-/*  !* Matches Opera 15 - latest (78) *!*/
+/*  !* Compatible con Edge 12 - actual (92) *!*/
+/*  !* Compatible con Chrome 16 - actual (95) *!*/
+/*  !* Compatible con Opera 15 - actual (78) *!*/
 
-/*  !* does not match Safari *!*/
-/*  !* does not match Firefox *!*/
+/*  !* No compatible con Safari *!*/
+/*  !* No compatible con Firefox *!*/
 /*  .chrome-only {*/
 /*    display: inline;*/
 /*  }*/
