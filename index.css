@@ -70,7 +70,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.2px;
+  stroke-width: 0.35px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -153,7 +153,8 @@ svg {
 .ring3-segment {
   fill: #000;
   fill-opacity: 0.2;
-  stroke: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
   pointer-events: none;
 }
 
