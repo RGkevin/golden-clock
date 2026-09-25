@@ -139,6 +139,34 @@ svg {
   pointer-events: none;
 }
 
+/* ── Anillo 3: 4 segmentos (centro) ──────────────────────── */
+
+.ring3-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring3-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: none;
+  pointer-events: none;
+}
+
+.ring3-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: monospace;
+  font-size: 3px;
+  font-weight: bold;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
 /* ── Anillo 1: 60 mini-círculos con valores Fibonacci ────── */
 
 .digit-cell {
