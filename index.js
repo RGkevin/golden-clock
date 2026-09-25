@@ -120,13 +120,13 @@ const RING2_IN = 24;
 const RING2_OUT = 28;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
-// Segmentos identificados por número: 2, 9, 3, 5
+// Segmentos identificados por número: 1, 8, 2, 4
 // Índices de línea para cada segmento
 const segments2 = [
-  { name: 2, startIdx: 1, endIdx: 15 },
-  { name: 9, startIdx: 16, endIdx: 30 },
-  { name: 3, startIdx: 31, endIdx: 45 },
-  { name: 5, startIdx: 46, endIdx: 60 }
+  { name: 1, startIdx: 1, endIdx: 15 },
+  { name: 8, startIdx: 16, endIdx: 30 },
+  { name: 2, startIdx: 31, endIdx: 45 },
+  { name: 4, startIdx: 46, endIdx: 60 }
 ];
 
 for (const seg of segments2) {
