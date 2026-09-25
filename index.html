@@ -32,39 +32,23 @@
             <stop offset="0%"   stop-color="#00e5ff" stop-opacity="0" />
             <stop offset="100%" stop-color="#00e5ff" stop-opacity="1" />
           </radialGradient>
-          <!-- Gradiente del fondo interior del círculo 2 (R=36): gris oscuro arriba → negro abajo -->
-          <linearGradient id="bg-inner-grad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stop-color="#1a1e2e" />
-            <stop offset="100%" stop-color="#000005" />
-          </linearGradient>
         </defs>
 
-        <!-- Capa 0: fondo interior con gradiente (dentro de R=36) -->
-        <circle cx="50" cy="50" r="36" class="bg-inner-circle" />
-
-        <!-- Capa 1: rellenos de segmentos internos (dibujados ANTES de la retícula) -->
-        <g id="arc-fills" aria-hidden="true"></g>
-
-        <!-- Capa 2: retícula + círculos de banda (encima de los rellenos) -->
+        <!-- Retícula + anillo 1: sus dos círculos forman las 60 casillas -->
         <g id="radial-grid" aria-hidden="true"></g>
+        <g id="segments" aria-label="12 segmentos de cuatro casillas"></g>
+        <g id="segment-labels" aria-label="Raíces digitales de los segmentos"></g>
         <circle class="band-circle main-band" cx="50" cy="50" r="44" />
         <circle class="band-circle main-band" cx="50" cy="50" r="40" />
-        <circle class="band-circle" cx="50" cy="50" r="36" />
-        <circle class="band-circle" cx="50" cy="50" r="28" />
-        <circle class="band-circle" cx="50" cy="50" r="20" />
-        <circle class="band-circle" cx="50" cy="50" r="12" />
-        <circle class="band-circle" cx="50" cy="50" r="4"  />
 
-        <!-- Capa 3: etiquetas de los segmentos (encima de la retícula) -->
-        <g id="arc-labels" aria-label="Valores de grupos y cuadrantes"></g>
-
-        <!-- Capa 4: anillo exterior de dígitos (encima de todo) -->
+        <!-- Valores Fibonacci de las 60 casillas del anillo 1 -->
         <g id="ring-digits" aria-label="60 dígitos de Fibonacci módulo 10"></g>
       </svg>
     </section>
     <section>
-      <p class="text-center">Encontré el <a href="https://es.wikipedia.org/wiki/Tetragrámaton">tetragrámaton</a> en la sucesión de Fibonacci. Consulta la explicación <a href="https://github.com/RGkevin/golden-clock">aquí</a>.</p>
-      <p class="text-center">v0.3.0</p>
+      <p class="text-center">El <a href="https://es.wikipedia.org/wiki/Tetragrámaton">tetragrámaton</a> en la <a href="https://es.wikipedia.org/wiki/Sucesión_de_Fibonacci">secuencia de fibonacci</a></p>
+      <p class="text-center"><a href="https://github.com/RGkevin/golden-clock">ver más</a></p>
+      <p class="text-center copyright">v0.3.0 · <a href="https://rgstudio.mx">© rgstudio</a></p>
     </section>
   </body>
   <script src="./index.js"></script>

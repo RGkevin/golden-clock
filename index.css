@@ -34,14 +34,6 @@ svg {
   transform-origin: center;
 }
 
-/* ── Fondo interior con gradiente (dentro de R=36) ───────── */
-
-.bg-inner-circle {
-  fill: url(#bg-inner-grad);
-  stroke: none;
-  pointer-events: none;
-}
-
 /* ── Retícula radial ──────────────────────────────────────── */
 
 #radial-grid {
@@ -64,14 +56,34 @@ svg {
 #radial-grid .axis-five {
   stroke: url(#grid-fade);
   stroke-width: 0.7px;
-  filter: drop-shadow(0 0 0.6px #C9A96E);
 }
 
 /* Separadores de 0 (ejes cardinales): dorado brillante desvanecido */
 #radial-grid .axis-zero {
   stroke: url(#grid-fade);
   stroke-width: 1.2px;
-  filter: drop-shadow(0 0 2px #FFD700) drop-shadow(0 0 5px #B8860B);
+}
+
+/* ── Segmentos internos: cuatro casillas por segmento ────── */
+
+.segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.2px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.segment-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: monospace;
+  font-size: 3px;
+  font-weight: bold;
+  fill: var(--gold-bright);
+  pointer-events: none;
 }
 
 /* ── Círculos de banda ────────────────────────────────────── */
@@ -83,7 +95,6 @@ svg {
   stroke-opacity: 0.7;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
-  filter: drop-shadow(0 0 0.8px #C9A96E);
 }
 
 /* Banda principal: mismo trazo visual que los mini-círculos (sin non-scaling-stroke) */
@@ -91,25 +102,15 @@ svg {
   stroke-width: 0.35px;
   stroke-opacity: 1;
   vector-effect: none;
-  filter: drop-shadow(0 0 0.5px #C9A96E);
 }
 
-/* ── Rellenos de segmentos (capa 1, debajo de la retícula) ── */
-
-.arc-fill {
-  fill: rgba(4, 13, 31, 0.82);
-  stroke: none;
-  pointer-events: none;
-}
-
-/* ── Anillo exterior: 60 celdas con dígitos ──────────────── */
+/* ── Anillo 1: 60 mini-círculos con valores Fibonacci ────── */
 
 .digit-cell {
   fill: #060f28;
   stroke: var(--gold-line);
   stroke-width: 0.2px;
   opacity: 0.2;
-  filter: drop-shadow(0 0 0.5px #C9A96E);
 }
 
 #ring-digits text {
@@ -121,49 +122,14 @@ svg {
 
 .fib-zero {
   fill: var(--gold-bright);
-  text-shadow: 0 0 2px #FFD700, 0 0 4px #B8860B, 0 0 8px #B8860B;
-  filter: drop-shadow(0 0 2px #FFD700) drop-shadow(0 0 4px #B8860B);
 }
 
 .fib-five {
   fill: var(--gold-bright);
-  text-shadow: 0 0 2px #FFD700, 0 0 4px #B8860B, 0 0 8px #B8860B;
-  filter: drop-shadow(0 0 2px #FFD700) drop-shadow(0 0 4px #B8860B);
 }
 
 .fib-digit {
   fill: var(--digit);
-  text-shadow: 0 0 0.8px #7dd3fc, 0 0 2px #7dd3fc;
-  filter: drop-shadow(0 0 0.8px #7dd3fc);
-}
-
-/* ── Etiquetas dentro de los arcos (capa 3, encima de la retícula) ── */
-
-.arc-label {
-  text-anchor: middle;
-  dominant-baseline: central;
-  font-family: monospace;
-  pointer-events: none;
-}
-
-.group-label {
-  font-size: 4px;
-  fill: var(--gold-bright);
-  filter: drop-shadow(0 0 2px #FFD700) drop-shadow(0 0 4px #B8860B);
-}
-
-.quad-label {
-  font-size: 6px;
-  fill: var(--gold-bright);
-  font-weight: bold;
-  filter: drop-shadow(0 0 3px #FFD700) drop-shadow(0 0 7px #B8860B);
-}
-
-.accum-label {
-  font-size: 4px;
-  fill: var(--gold-bright);
-  font-weight: bold;
-  filter: drop-shadow(0 0 2px #FFD700);
 }
 
 /* ── Control de animación ─────────────────────────────────── */
@@ -228,7 +194,6 @@ h1 {
   color: var(--gold-bright);
   text-align: center;
   margin-bottom: 5px;
-  filter: drop-shadow(0 0 4px #FFD700) drop-shadow(0 0 10px #B8860B);
   letter-spacing: 0.08em;
 }
 
@@ -244,6 +209,11 @@ h5 {
   text-align: center;
   color: var(--gold-line);
   opacity: 0.7;
+}
+
+.text-center.copyright {
+  opacity: 0.4;
+  font-size: 0.85rem;
 }
 
 a { color: var(--gold-bright); }

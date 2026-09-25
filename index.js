@@ -10,28 +10,24 @@ for (let i = 0; i < 60; i++) {
   [fa, fb] = [fb, (fa + fb) % 10];
 }
 
-const DR     = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
 const posRad = i => i * 6 * D2R; // ángulo CCW desde eje X
 
 // Punto en coords SVG (Y invertido respecto a matemáticas)
 const pt = (r, a) => [CX + r * Math.cos(a), CY - r * Math.sin(a)];
 
-// Sector de dona (arco CCW de a → b, radio interior/exterior)
-function sector(a, b, rIn, rOut) {
+// Contorno de una banda segmentada entre dos radios.
+function segmentPath(a, b, rIn, rOut) {
   const [x1, y1] = pt(rOut, a);
   const [x2, y2] = pt(rOut, b);
   const [x3, y3] = pt(rIn, b);
   const [x4, y4] = pt(rIn, a);
-  const large = (b - a) > Math.PI ? 1 : 0;
   const f = n => n.toFixed(3);
-  return `M${f(x1)} ${f(y1)} A${rOut} ${rOut} 0 ${large} 0 ${f(x2)} ${f(y2)} `
-       + `L${f(x3)} ${f(y3)} A${rIn} ${rIn} 0 ${large} 1 ${f(x4)} ${f(y4)} Z`;
+
+  return `M${f(x1)} ${f(y1)} A${rOut} ${rOut} 0 0 0 ${f(x2)} ${f(y2)} `
+       + `L${f(x3)} ${f(y3)} A${rIn} ${rIn} 0 0 1 ${f(x4)} ${f(y4)} Z`;
 }
 
 function mk(tag) { return document.createElementNS(svgNS, tag); }
-
-// Separación angular entre segmentos adyacentes (1° = 1/6 de posición)
-const ARC_GAP = 1 / 6;
 
 // ── Retícula radial ───────────────────────────────────────
 // Líneas de límite (posRad(i)): separadores hasta R=46, resto hasta R=44.
@@ -66,6 +62,7 @@ for (let i = 0; i < 60; i++) {
   const d = fib[i];
   const [x, y] = pt(42, posRad(i + 0.5));
 
+  // Excepción del anillo 1: cada casilla conserva su mini-círculo.
   const c = mk('circle');
   c.setAttribute('cx', x.toFixed(3));
   c.setAttribute('cy', y.toFixed(3));
@@ -86,75 +83,32 @@ for (let i = 0; i < 60; i++) {
   ringDigits.append(t);
 }
 
-// ── Helpers para añadir rellenos y etiquetas en sus capas ─
-const arcFills  = document.querySelector('#arc-fills');
-const arcLabels = document.querySelector('#arc-labels');
+// ── Segmentos: 12 grupos de 4 casillas ───────────────────
+// Cada divisor (0 o 5) queda fuera: el segmento ocupa las cuatro
+// casillas internas entre ese divisor y el siguiente.
+const segments = document.querySelector('#segments');
+const segmentLabels = document.querySelector('#segment-labels');
+const SEGMENT_IN = 32;
+const SEGMENT_OUT = 36;
+const SEGMENT_MID = (SEGMENT_IN + SEGMENT_OUT) / 2;
+const digitalRoot = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
 
-function addFill(d, cls) {
-  const p = mk('path');
-  p.setAttribute('d', d);
-  p.setAttribute('class', 'arc-fill ' + cls);
-  arcFills.append(p);
-}
+for (let i = 0; i < 12; i++) {
+  const segment = mk('path');
+  segment.setAttribute('d', segmentPath(posRad(i * 5 + 1), posRad((i + 1) * 5), SEGMENT_IN, SEGMENT_OUT));
+  segment.setAttribute('class', 'segment');
+  segments.append(segment);
 
-function addLabel(tx, ty, aMidRad, cls, text) {
-  const svgRot = 90 - (aMidRad * 180 / Math.PI);
-  const t = mk('text');
-  t.setAttribute('x', tx.toFixed(3));
-  t.setAttribute('y', ty.toFixed(3));
-  t.setAttribute('transform', `rotate(${svgRot.toFixed(2)},${tx.toFixed(3)},${ty.toFixed(3)})`);
-  t.setAttribute('class', 'arc-label ' + cls);
-  t.textContent = text;
-  arcLabels.append(t);
-}
-
-// ── Anillo de grupos: 12 arcos, R 28–36 ──────────────────
-const [RG_OUT, RG_IN] = [36, 28];
-const RG_MID = (RG_OUT + RG_IN) / 2;
-
-for (let k = 0; k < 12; k++) {
-  const digits = [fib[5*k+1], fib[5*k+2], fib[5*k+3], fib[5*k+4]];
-  const value  = DR(digits.reduce((s, d) => s + d, 0));
-  const aStart = posRad(5*k + 1 + ARC_GAP);
-  const aEnd   = posRad(5*k + 5 - ARC_GAP);
-  const aMid   = posRad(5*k + 3);
-
-  addFill(sector(aStart, aEnd, RG_IN, RG_OUT), 'group-arc');
-  const [tx, ty] = pt(RG_MID, aMid);
-  addLabel(tx, ty, aMid, 'group-label', value);
-}
-
-// ── Anillo de cuadrantes: 4 arcos, R 20–28 ───────────────
-const [RQ_OUT, RQ_IN] = [28, 20];
-const RQ_MID = (RQ_OUT + RQ_IN) / 2;
-const tetValues = [1, 8, 2, 4];
-
-for (let q = 0; q < 4; q++) {
-  const aStart = posRad(15*q + 1 + ARC_GAP);
-  const aEnd   = posRad(15*q + 15 - ARC_GAP);
-  const aMid   = posRad(15*q + 8);
-
-  addFill(sector(aStart, aEnd, RQ_IN, RQ_OUT), 'quad-arc');
-  const [tx, ty] = pt(RQ_MID, aMid);
-  addLabel(tx, ty, aMid, 'quad-label', tetValues[q]);
-}
-
-// ── Arcos de acumulación ──────────────────────────────────
-// Ambos parten del inicio del cuadrante Q1/8 (posición 16 = 96°).
-// Acum1: 8+2=10 → llega al 2 (posición 45 = 270°)
-// Acum2: 10+4=14 → llega al 4 (posición 60 = 360°)
-const accumStart = posRad(16 + ARC_GAP);
-const accumRings = [
-  { rOut: 20, rIn: 12, aEnd: posRad(45 - ARC_GAP), label: '10' },
-  { rOut: 12, rIn:  4, aEnd: posRad(60 - ARC_GAP), label: '14' },
-];
-
-for (const { rOut, rIn, aEnd, label } of accumRings) {
-  const rMid = (rOut + rIn) / 2;
-  addFill(sector(accumStart, aEnd, rIn, rOut), 'accum-arc');
-  const aMid = (accumStart + aEnd) / 2;
-  const [tx, ty] = pt(rMid, aMid);
-  addLabel(tx, ty, aMid, 'accum-label', label);
+  const value = digitalRoot(fib.slice(i * 5 + 1, i * 5 + 5).reduce((sum, digit) => sum + digit, 0));
+  const labelAngle = posRad(i * 5 + 3);
+  const [x, y] = pt(SEGMENT_MID, labelAngle);
+  const label = mk('text');
+  label.setAttribute('x', x.toFixed(3));
+  label.setAttribute('y', y.toFixed(3));
+  label.setAttribute('transform', `rotate(${(90 - (labelAngle * 180 / Math.PI)).toFixed(2)},${x.toFixed(3)},${y.toFixed(3)})`);
+  label.setAttribute('class', 'segment-label');
+  label.textContent = value;
+  segmentLabels.append(label);
 }
 
 // ── Control de animación ──────────────────────────────────
