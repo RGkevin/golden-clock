@@ -162,16 +162,16 @@ for (const seg of segments2) {
 }
 
 // ── Anillo 4: segmento grande ────────────────────────────
-// Ancho: 4 (radio 8-12), mismo que anillo 2.
+// Ancho: 4 (radio 20-24), mismo que anillo 2.
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
-const RING4_IN = 8;
-const RING4_OUT = 12;
+const RING4_IN = 20;
+const RING4_OUT = 24;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
-// Segmento del índice 30 al 59
-const ring4Seg = { startIdx: 30, endIdx: 59 };
+// Segmento del índice 1 al 30
+const ring4Seg = { startIdx: 1, endIdx: 30 };
 
 // Crear arco (línea del anillo)
 const arc4 = mk('path');
@@ -195,7 +195,7 @@ label4.setAttribute('x', x4.toFixed(3));
 label4.setAttribute('y', y4.toFixed(3));
 label4.setAttribute('transform', `rotate(${(90 - (labelAngle4 * 180 / Math.PI)).toFixed(2)},${x4.toFixed(3)},${y4.toFixed(3)})`);
 label4.setAttribute('class', 'ring4-label');
-label4.textContent = 'י';
+label4.textContent = '10 י';
 ring4Labels.append(label4);
 
 // ── Control de animación ──────────────────────────────────
