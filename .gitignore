@@ -7,3 +7,6 @@
 out
 gen
 node_modules
+
+# Configuración local de Conductor
+.conductor/settings.local.toml

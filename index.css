@@ -1,176 +1,289 @@
 /*
-* Made by Kevin López
+* Creado por Kevin López
 */
 
 :root {
-  --background-0: black;
-  --text-1: green;
-  --text-2: orange;
-  --text-3: skyblue;
-  --text-4: blue;
-  --text-5: white;
-  --text-6: var(--text-5);
+  --bg:          #040d1f;   /* azul marino profundo */
+  --gold-line:   #C9A96E;   /* dorado pálido — líneas estructurales */
+  --gold-bright: #FFD700;   /* dorado brillante — números grandes */
+  --gold-glow:   #B8860B;   /* dorado oscuro — halo secundario */
+  --zero:        #00e5ff;   /* cian — separadores 0 */
+  --five:        #93c5fd;   /* azul cielo — separadores 5 */
+  --digit:       #dbeafe;   /* blanco-azulado — dígitos normales */
 }
 
 *,
-*:after,
-*:before {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 body {
-  display: -ms-grid;
   display: grid;
   place-items: center;
   min-height: 100vh;
   font-family: "Google Sans", sans-serif, system-ui;
-  overflow: hidden;
-  background: var(--background-0);
-  color: var(--text-1);
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--digit);
 }
 
 svg {
-  width: 80vmin;
+  width: 97vmin;
   overflow: visible;
+  transform-origin: center;
 }
 
-path {
-  opacity: 0.1;
+/* ── Retícula radial ──────────────────────────────────────── */
+
+#radial-grid {
+  pointer-events: none;
 }
 
-.dg :is(.cr.string, .cr.number) input[type="text"] {
-  color: white;
-  line-height: 1;
+/* Base para todas las líneas */
+#radial-grid line {
+  stroke-width: 0.4px;
+  vector-effect: non-scaling-stroke;
 }
 
-/*
-* The whole dial spins as a single rigid group, so every ring shares one
-* animation and can never drift out of phase with the others.
-*/
-svg {
-  -webkit-transform-origin: center;
-  -ms-transform-origin: center;
-      transform-origin: center;
-  -webkit-animation-name: spinning;
-          animation-name: spinning;
-  -webkit-animation-duration: 150s;
-          animation-duration: 150s;
-  -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-          animation-timing-function: linear;
+/* Líneas regulares: degradado dorado desde el centro */
+#radial-grid .grid-fade {
+  stroke: url(#grid-fade);
+  stroke-opacity: 1;
 }
 
-/*
-* Anchor every ring to the viewBox centre (50,50). Without this, `center`
-* resolves against each element's own bounding box, so the rings would pivot
-* around different points and slide out of alignment.
-*/
-svg > * {
-  -webkit-transform-box: view-box;
-          transform-box: view-box;
-  -webkit-transform-origin: 50% 50%;
-      -ms-transform-origin: 50% 50%;
-          transform-origin: 50% 50%;
+/* Separadores de 5: dorado desvanecido, más grueso */
+#radial-grid .axis-five {
+  stroke: url(#grid-fade);
+  stroke-width: 0.7px;
 }
 
-text {
-  /* -webkit-transform-origin: center;
-      -ms-transform-origin: center;
-          transform-origin: center;
-  -webkit-animation-name: spinning;
-          animation-name: spinning;
-  -webkit-animation-duration: 60s;
-          animation-duration: 60s;
-  -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-          animation-timing-function: linear; */
-  -webkit-transition: all;
-  -o-transition: all;
-  transition: all;
-  transform: rotate(0deg);
-  -webkit-transform: rotate(0deg);
-  -ms-transform: rotate(0deg);
+/* Separadores de 0 (ejes cardinales): dorado brillante desvanecido */
+#radial-grid .axis-zero {
+  stroke: url(#grid-fade);
+  stroke-width: 1.2px;
 }
 
-#text-1 {
-  fill: var(--text-1);
+/* ── Segmentos internos: cuatro casillas por segmento ────── */
+
+.segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
 }
-#text-2 {
-  fill: var(--text-2);
+
+.segment-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: monospace;
+  font-size: 3px;
+  font-weight: bold;
+  fill: var(--gold-bright);
+  pointer-events: none;
 }
-#text-3 {
-  fill: var(--text-3);
+
+/* ── Círculos de banda ────────────────────────────────────── */
+
+.band-circle {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  stroke-opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
 }
-#text-4 {
-  fill: var(--text-4);
+
+/* Banda principal: mismo trazo visual que los mini-círculos (sin non-scaling-stroke) */
+.band-circle.main-band {
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
 }
-#text-5 {
-  fill: var(--text-5);
+
+/* Anillo 2: banda de cuadrantes */
+.band-circle.ring2-band {
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
 }
-#text-6 {
-  fill: var(--text-6);
+
+/* ── Anillo 2: 4 segmentos grandes ─────────────────────────── */
+
+.ring2-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring2-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: none;
+  pointer-events: none;
+}
+
+.ring2-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: monospace;
+  font-size: 3px;
+  font-weight: bold;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+/* ── Anillo 4: segmento grande ──────────────────────────── */
+
+.ring4-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring4-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.35px;
+  pointer-events: none;
+}
+
+.ring4-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: monospace;
+  font-size: 3px;
+  font-weight: bold;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+/* ── Anillo 1: 60 mini-círculos con valores Fibonacci ────── */
+
+.digit-cell {
+  fill: #060f28;
+  stroke: var(--gold-line);
+  stroke-width: 0.2px;
+  opacity: 0.2;
+}
+
+#ring-digits text {
+  font-family: monospace;
+  font-size: 2.5px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.fib-zero {
+  fill: var(--gold-bright);
+}
+
+.fib-five {
+  fill: var(--gold-bright);
+}
+
+.fib-digit {
+  fill: var(--digit);
+}
+
+/* ── Control de animación ─────────────────────────────────── */
+
+.animation-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  color: var(--gold-line);
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+}
+
+.animation-control input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switch-track {
+  width: 42px;
+  height: 24px;
+  border: 1px solid #444;
+  border-radius: 999px;
+  background: #0a1628;
+  transition: background 200ms, border-color 200ms;
+}
+
+.switch-track::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 3px;
+  border-radius: 50%;
+  background: var(--gold-line);
+  transition: transform 200ms;
+}
+
+.animation-control input:checked + .switch-track {
+  background: #1a2a0a;
+  border-color: var(--gold-bright);
+}
+
+.animation-control input:checked + .switch-track::before {
+  transform: translateX(18px);
+  background: var(--gold-bright);
+}
+
+.animation-control input:focus-visible + .switch-track {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+/* ── Tipografía general ───────────────────────────────────── */
+
+h1 {
+  color: var(--gold-bright);
+  text-align: center;
+  margin-bottom: 5px;
+  letter-spacing: 0.08em;
+}
+
+h5 {
+  text-align: center;
+  color: var(--gold-line);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
 }
 
 .text-center {
   text-align: center;
+  color: var(--gold-line);
+  opacity: 0.7;
 }
 
-@-webkit-keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
+.text-center.copyright {
+  opacity: 0.4;
+  font-size: 0.85rem;
 }
 
-@keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
-}
+a { color: var(--gold-bright); }
 
-h1 {
-  color: white;
-  text-align: center;
-  margin-bottom: 5px;
+/* Anclar transform-origin al centro del viewBox */
+svg > * {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
 }
-h5 {
-  text-align: center;
-  color: grey;
-}
-
-.chrome-only {
-  display: none;
-}
-.mobile-safari-only {
-  display: none;
-}
-.safari-only {
-  display: none;
-}
-
-/*@supports(-webkit-tap-highlight-color: black) {*/
-/*  !* Matches Edge 12 - latest (92) *!*/
-/*  !* Matches Chrome 16 - latest (95) *!*/
-/*  !* Matches Opera 15 - latest (78) *!*/
-
-/*  !* does not match Safari *!*/
-/*  !* does not match Firefox *!*/
-/*  .chrome-only {*/
-/*    display: inline;*/
-/*  }*/
-/*  .safari-only {*/
-/*    display: none;*/
-/*  }*/
-/*}*/

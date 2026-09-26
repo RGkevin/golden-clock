@@ -1,7 +1,7 @@
 {
   "name": "golden-clock",
   "version": "0.2.4",
-  "description": "The Golden Clock - Kevin López",
+  "description": "El Reloj Áureo - Kevin López",
   "main": "index.js",
   "scripts": {
     "test": "test",
