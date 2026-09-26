@@ -161,6 +161,43 @@ for (const seg of segments2) {
   ring2Labels.append(label);
 }
 
+// ── Anillo 4: segmento grande ────────────────────────────
+// Ancho: 4 (radio 8-12), mismo que anillo 2.
+const ring4Arcs = document.querySelector('#ring4-arcs');
+const ring4Segments = document.querySelector('#ring4-segments');
+const ring4Labels = document.querySelector('#ring4-labels');
+const RING4_IN = 8;
+const RING4_OUT = 12;
+const RING4_MID = (RING4_IN + RING4_OUT) / 2;
+
+// Segmento del índice 30 al 59
+const ring4Seg = { startIdx: 30, endIdx: 59 };
+
+// Crear arco (línea del anillo)
+const arc4 = mk('path');
+arc4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
+arc4.setAttribute('class', 'ring4-arc');
+ring4Arcs.append(arc4);
+
+// Crear segmento (relleno)
+const segment4 = mk('path');
+segment4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
+segment4.setAttribute('class', 'ring4-segment');
+ring4Segments.append(segment4);
+
+// Suma de dígitos Fibonacci entre estos índices
+const sliceEnd4 = ring4Seg.endIdx === 60 ? 60 : ring4Seg.endIdx + 1;
+const value4 = digitalRoot(fib.slice(ring4Seg.startIdx, sliceEnd4).reduce((sum, digit) => sum + digit, 0));
+const labelAngle4 = posRad(ring4Seg.startIdx + (ring4Seg.endIdx - ring4Seg.startIdx) / 2);
+const [x4, y4] = pt(RING4_MID, labelAngle4);
+const label4 = mk('text');
+label4.setAttribute('x', x4.toFixed(3));
+label4.setAttribute('y', y4.toFixed(3));
+label4.setAttribute('transform', `rotate(${(90 - (labelAngle4 * 180 / Math.PI)).toFixed(2)},${x4.toFixed(3)},${y4.toFixed(3)})`);
+label4.setAttribute('class', 'ring4-label');
+label4.textContent = 10;
+ring4Labels.append(label4);
+
 // ── Control de animación ──────────────────────────────────
 const dial = document.querySelector('svg');
 const animationToggle = document.querySelector('#animation-toggle');
