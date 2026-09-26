@@ -112,12 +112,12 @@ for (let i = 0; i < 12; i++) {
 }
 
 // ── Anillo 2: 4 segmentos grandes ─────────────────────────
-// Posición 0.5 (ancho 4, radio 34-38).
+// Ancho: 4 (radio 24-28), mismo que anillo 1.
 const ring2Arcs = document.querySelector('#ring2-arcs');
 const ring2Segments = document.querySelector('#ring2-segments');
 const ring2Labels = document.querySelector('#ring2-labels');
-const RING2_IN = 34;
-const RING2_OUT = 38;
+const RING2_IN = 24;
+const RING2_OUT = 28;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
 // Mapeo de valores para las etiquetas del anillo 2
@@ -162,12 +162,12 @@ for (const seg of segments2) {
 }
 
 // ── Anillo 4: segmento grande ────────────────────────────
-// Posición 1.0 (ancho 4, radio 28-32).
+// Ancho: 4 (radio 8-12), mismo que anillo 2, con espaciado igual a anillo 1-2.
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
-const RING4_IN = 28;
-const RING4_OUT = 32;
+const RING4_IN = 8;
+const RING4_OUT = 12;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
 // Segmento del índice 16 al 45
