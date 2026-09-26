@@ -170,8 +170,8 @@ const RING4_IN = 20;
 const RING4_OUT = 24;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
-// Segmento del índice 1 al 30
-const ring4Seg = { startIdx: 1, endIdx: 30 };
+// Segmento del índice 16 al 45
+const ring4Seg = { startIdx: 16, endIdx: 45 };
 
 // Crear arco (línea del anillo)
 const arc4 = mk('path');
