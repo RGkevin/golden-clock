@@ -228,8 +228,70 @@ label5.setAttribute('x', x5.toFixed(3));
 label5.setAttribute('y', y5.toFixed(3));
 label5.setAttribute('transform', `rotate(${(90 - (labelAngle5 * 180 / Math.PI)).toFixed(2)},${x5.toFixed(3)},${y5.toFixed(3)})`);
 label5.setAttribute('class', 'ring5-label');
-label5.textContent = value5;
+label5.textContent = '5 ה';
 ring5Labels.append(label5);
+
+// ── Anillo 6: segmento grande ────────────────────────────
+// Índices = anillo 5 + 15: startIdx=46, endIdx=75 (%60=15)
+const ring6Arcs = document.querySelector('#ring6-arcs');
+const ring6Segments = document.querySelector('#ring6-segments');
+const ring6Labels = document.querySelector('#ring6-labels');
+const RING6_IN = 13;
+const RING6_OUT = 16;
+const RING6_MID = (RING6_IN + RING6_OUT) / 2;
+
+const ring6Seg = { startIdx: 46, endIdx: 75 };
+
+const arc6 = mk('path');
+arc6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
+arc6.setAttribute('class', 'ring6-arc');
+ring6Arcs.append(arc6);
+
+const segment6 = mk('path');
+segment6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
+segment6.setAttribute('class', 'ring6-segment');
+ring6Segments.append(segment6);
+
+const labelAngle6 = posRad(ring6Seg.startIdx + (ring6Seg.endIdx - ring6Seg.startIdx) / 2);
+const [x6, y6] = pt(RING6_MID, labelAngle6);
+const label6 = mk('text');
+label6.setAttribute('x', x6.toFixed(3));
+label6.setAttribute('y', y6.toFixed(3));
+label6.setAttribute('transform', `rotate(${(90 - (labelAngle6 * 180 / Math.PI)).toFixed(2)},${x6.toFixed(3)},${y6.toFixed(3)})`);
+label6.setAttribute('class', 'ring6-label');
+label6.textContent = '6 ו';
+ring6Labels.append(label6);
+
+// ── Anillo 7: segmento grande ────────────────────────────
+// Índices = anillo 6 + 15: startIdx=61 (%60=1), endIdx=90 (%60=30)
+const ring7Arcs = document.querySelector('#ring7-arcs');
+const ring7Segments = document.querySelector('#ring7-segments');
+const ring7Labels = document.querySelector('#ring7-labels');
+const RING7_IN = 8;
+const RING7_OUT = 11;
+const RING7_MID = (RING7_IN + RING7_OUT) / 2;
+
+const ring7Seg = { startIdx: 61, endIdx: 90 };
+
+const arc7 = mk('path');
+arc7.setAttribute('d', segmentPath(posRad(ring7Seg.startIdx % 60), posRad(ring7Seg.endIdx % 60), RING7_IN, RING7_OUT));
+arc7.setAttribute('class', 'ring7-arc');
+ring7Arcs.append(arc7);
+
+const segment7 = mk('path');
+segment7.setAttribute('d', segmentPath(posRad(ring7Seg.startIdx % 60), posRad(ring7Seg.endIdx % 60), RING7_IN, RING7_OUT));
+segment7.setAttribute('class', 'ring7-segment');
+ring7Segments.append(segment7);
+
+const labelAngle7 = posRad((ring7Seg.startIdx + (ring7Seg.endIdx - ring7Seg.startIdx) / 2) % 60);
+const [x7, y7] = pt(RING7_MID, labelAngle7);
+const label7 = mk('text');
+label7.setAttribute('x', x7.toFixed(3));
+label7.setAttribute('y', y7.toFixed(3));
+label7.setAttribute('transform', `rotate(${(90 - (labelAngle7 * 180 / Math.PI)).toFixed(2)},${x7.toFixed(3)},${y7.toFixed(3)})`);
+label7.setAttribute('class', 'ring7-label');
+label7.textContent = '5 ה';
+ring7Labels.append(label7);
 
 // ── Control de animación ──────────────────────────────────
 const dial = document.querySelector('svg');
