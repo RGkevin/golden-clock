@@ -195,7 +195,7 @@ label4.setAttribute('x', x4.toFixed(3));
 label4.setAttribute('y', y4.toFixed(3));
 label4.setAttribute('transform', `rotate(${(90 - (labelAngle4 * 180 / Math.PI)).toFixed(2)},${x4.toFixed(3)},${y4.toFixed(3)})`);
 label4.setAttribute('class', 'ring4-label');
-label4.textContent = 10;
+label4.textContent = 'י';
 ring4Labels.append(label4);
 
 // ── Control de animación ──────────────────────────────────
