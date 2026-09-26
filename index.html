@@ -10,11 +10,10 @@
     <section>
       <h1>El Reloj Áureo</h1>
       <h5>Kevin López</h5>
-      <label class="animation-control">
-        <span>Animación</span>
-        <input id="animation-toggle" type="checkbox" role="switch" />
-        <span class="switch-track" aria-hidden="true"></span>
-      </label>
+      <div class="animation-control" role="group" aria-label="Velocidad de animación">
+        <button class="anim-btn" data-duration="60000">1 digit/s</button>
+        <button class="anim-btn" data-duration="150000">slow mo</button>
+      </div>
     </section>
     <section>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

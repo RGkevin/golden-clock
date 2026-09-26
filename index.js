@@ -296,41 +296,62 @@ ring7Labels.append(label7);
 // ── Control de animación ──────────────────────────────────
 const INITIAL_ROT = 273;
 const dial = document.querySelector('svg');
-const animationToggle = document.querySelector('#animation-toggle');
-let dialAnimation;
+const animBtns = document.querySelectorAll('.anim-btn');
+let dialAnimation = null;
+let activeBtn = null;
 
-function updateAnimation() {
+function currentAngle() {
   const transform = getComputedStyle(dial).transform;
   const matrix = new DOMMatrixReadOnly(transform === 'none' ? undefined : transform);
-  const angle = Math.atan2(matrix.b, matrix.a) * 180 / Math.PI;
+  return Math.atan2(matrix.b, matrix.a) * 180 / Math.PI;
+}
 
+function stopAnimation() {
+  const angle = currentAngle();
+  if (dialAnimation) {
+    dialAnimation.onfinish = null;
+    dialAnimation.cancel();
+    dialAnimation = null;
+  }
+  // Normaliza el target para tomar siempre el camino más corto (≤180°)
+  let target = INITIAL_ROT;
+  const delta = ((target - angle) % 360 + 360) % 360;
+  target = angle + (delta > 180 ? delta - 360 : delta);
+  const anim = dial.animate(
+    [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${target}deg)` }],
+    { duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
+  );
+  anim.onfinish = () => {
+    dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
+    anim.cancel();
+  };
+}
+
+function startAnimation(duration) {
+  const angle = currentAngle();
   if (dialAnimation) {
     dialAnimation.onfinish = null;
     dialAnimation.cancel();
   }
-
-  if (animationToggle.checked) {
-    dialAnimation = dial.animate(
-      [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${angle + 360}deg)` }],
-      { duration: 150000, iterations: Infinity, easing: 'linear' }
-    );
-  } else {
-    // Normaliza el target para tomar siempre el camino más corto (≤180°)
-    let target = INITIAL_ROT;
-    const delta = ((target - angle) % 360 + 360) % 360;
-    target = angle + (delta > 180 ? delta - 360 : delta);
-    dialAnimation = dial.animate(
-      [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${target}deg)` }],
-      { duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
-    );
-    dialAnimation.onfinish = () => {
-      dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
-      dialAnimation.cancel();
-      dialAnimation = null;
-    };
-  }
+  dialAnimation = dial.animate(
+    [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${angle + 360}deg)` }],
+    { duration, iterations: Infinity, easing: 'linear' }
+  );
 }
 
+animBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn === activeBtn) {
+      btn.classList.remove('active');
+      activeBtn = null;
+      stopAnimation();
+    } else {
+      animBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeBtn = btn;
+      startAnimation(Number(btn.dataset.duration));
+    }
+  });
+});
+
 dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
-animationToggle.addEventListener('change', updateAnimation);
-updateAnimation();

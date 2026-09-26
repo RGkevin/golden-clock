@@ -277,49 +277,39 @@ svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 0;
   min-height: 44px;
-  color: var(--gold-line);
-  font-size: 14px;
-  cursor: pointer;
-  position: relative;
 }
 
-.animation-control input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-}
-
-.switch-track {
-  width: 42px;
-  height: 24px;
-  border: 1px solid #444;
-  border-radius: 999px;
+.anim-btn {
+  padding: 6px 16px;
   background: #0a1628;
-  transition: background 200ms, border-color 200ms;
+  color: var(--gold-line);
+  border: 1px solid #444;
+  font-size: 0.75rem;
+  font-family: monospace;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, border-color 150ms;
 }
 
-.switch-track::before {
-  content: "";
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin: 3px;
-  border-radius: 50%;
-  background: var(--gold-line);
-  transition: transform 200ms;
+.anim-btn:first-child {
+  border-radius: 999px 0 0 999px;
+  border-right: none;
 }
 
-.animation-control input:checked + .switch-track {
+.anim-btn:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.anim-btn:hover {
+  border-color: var(--gold-line);
+  color: var(--gold-bright);
+}
+
+.anim-btn.active {
   background: #1a2a0a;
   border-color: var(--gold-bright);
-}
-
-.animation-control input:checked + .switch-track::before {
-  transform: translateX(18px);
-  background: var(--gold-bright);
+  color: var(--gold-bright);
 }
 
 .animation-control input:focus-visible + .switch-track {
