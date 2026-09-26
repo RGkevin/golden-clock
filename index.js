@@ -88,7 +88,7 @@ for (let i = 0; i < 60; i++) {
 // casillas internas entre ese divisor y el siguiente.
 const segments = document.querySelector('#segments');
 const segmentLabels = document.querySelector('#segment-labels');
-const SEGMENT_IN = 32;
+const SEGMENT_IN = 31;
 const SEGMENT_OUT = 36;
 const SEGMENT_MID = (SEGMENT_IN + SEGMENT_OUT) / 2;
 const digitalRoot = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
@@ -116,8 +116,8 @@ for (let i = 0; i < 12; i++) {
 const ring2Arcs = document.querySelector('#ring2-arcs');
 const ring2Segments = document.querySelector('#ring2-segments');
 const ring2Labels = document.querySelector('#ring2-labels');
-const RING2_IN = 26;
-const RING2_OUT = 30;
+const RING2_IN = 22;
+const RING2_OUT = 27;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
 // Mapeo de valores para las etiquetas del anillo 2
@@ -166,8 +166,8 @@ for (const seg of segments2) {
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
-const RING4_IN = 20;
-const RING4_OUT = 24;
+const RING4_IN = 13;
+const RING4_OUT = 18;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
 // Segmento del índice 16 al 45
