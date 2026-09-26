@@ -294,6 +294,7 @@ label7.textContent = '5 ה';
 ring7Labels.append(label7);
 
 // ── Control de animación ──────────────────────────────────
+const INITIAL_ROT = 273;
 const dial = document.querySelector('svg');
 const animationToggle = document.querySelector('#animation-toggle');
 let dialAnimation;
@@ -314,17 +315,22 @@ function updateAnimation() {
       { duration: 150000, iterations: Infinity, easing: 'linear' }
     );
   } else {
+    // Normaliza el target para tomar siempre el camino más corto (≤180°)
+    let target = INITIAL_ROT;
+    const delta = ((target - angle) % 360 + 360) % 360;
+    target = angle + (delta > 180 ? delta - 360 : delta);
     dialAnimation = dial.animate(
-      [{ transform: `rotate(${angle}deg)` }, { transform: 'rotate(0deg)' }],
+      [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${target}deg)` }],
       { duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
     );
     dialAnimation.onfinish = () => {
-      dial.style.transform = 'rotate(0deg)';
+      dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
       dialAnimation.cancel();
       dialAnimation = null;
     };
   }
 }
 
+dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
 animationToggle.addEventListener('change', updateAnimation);
 updateAnimation();
