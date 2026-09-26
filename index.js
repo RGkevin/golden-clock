@@ -29,17 +29,99 @@ function segmentPath(a, b, rIn, rOut) {
 
 function mk(tag) { return document.createElementNS(svgNS, tag); }
 
+// Suma de dígitos Fibonacci en un rango (soporta wrap)
+function rangeSum(startIdx, endIdx) {
+  let s = 0;
+  for (let i = 0; i < endIdx - startIdx; i++) s += fib[(startIdx + i) % 60];
+  return s;
+}
+
+// Índices involucrados en un rango (set, soporta wrap)
+function rangeSet(startIdx, endIdx) {
+  const s = new Set();
+  for (let i = 0; i < endIdx - startIdx; i++) s.add((startIdx + i) % 60);
+  return s;
+}
+
+const digitalRoot = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
+
+// Genera texto de descomposición: "23=2+3=5"
+function mkDecompStr(rawSum) {
+  if (rawSum <= 9) return null;
+  const digits = String(rawSum).split('').map(Number);
+  const s1 = digits.reduce((a, b) => a + b, 0);
+  if (s1 <= 9) return `${rawSum}=${digits.join('+')}=${s1}`;
+  const d2 = String(s1).split('').map(Number);
+  return `${rawSum}=${digits.join('+')}=${s1}=${d2.join('+')}=${d2.reduce((a,b)=>a+b,0)}`;
+}
+
+// ── Estado de interactividad ──────────────────────────────────
+const allInteractive = [];
+let selectedSeg = null;
+const decompLabels = document.querySelector('#decomp-labels');
+
+function makeDecompEl(rawSum, labelAngle, midR) {
+  const text = mkDecompStr(rawSum);
+  if (!text) return null;
+  const r = midR - 1.8;
+  const [dx, dy] = pt(r, labelAngle);
+  const rotDeg = 90 - (labelAngle * 180 / Math.PI);
+  const el = mk('text');
+  el.setAttribute('x', dx.toFixed(3));
+  el.setAttribute('y', dy.toFixed(3));
+  el.setAttribute('transform', `rotate(${rotDeg.toFixed(2)},${dx.toFixed(3)},${dy.toFixed(3)})`);
+  el.setAttribute('class', 'decomp-text');
+  el.textContent = text;
+  decompLabels.append(el);
+  return el;
+}
+
+function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR) {
+  const decompEl = rawSum != null ? makeDecompEl(rawSum, labelAngle, midR) : null;
+  allInteractive.push({ pathEl, startIdx, endIdx, decompEl });
+  pathEl.addEventListener('click', () => handleSegClick(pathEl));
+}
+
+function handleSegClick(pathEl) {
+  const seg = allInteractive.find(s => s.pathEl === pathEl);
+  if (!seg) return;
+
+  if (selectedSeg === seg) {
+    // Deselect
+    selectedSeg = null;
+    allInteractive.forEach(s => {
+      s.pathEl.classList.remove('seg-dimmed');
+      if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
+    });
+    document.querySelectorAll('[data-idx]').forEach(el =>
+      el.classList.remove('digit-lit', 'digit-dim')
+    );
+  } else {
+    selectedSeg = seg;
+    const lit = rangeSet(seg.startIdx, seg.endIdx);
+
+    allInteractive.forEach(s => {
+      if (s === seg) {
+        s.pathEl.classList.remove('seg-dimmed');
+        if (s.decompEl) s.decompEl.classList.add('decomp-visible');
+      } else {
+        s.pathEl.classList.add('seg-dimmed');
+        if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
+      }
+    });
+
+    document.querySelectorAll('[data-idx]').forEach(el => {
+      const idx = parseInt(el.dataset.idx);
+      el.classList.toggle('digit-lit', lit.has(idx));
+      el.classList.toggle('digit-dim', !lit.has(idx));
+    });
+  }
+}
+
 // ── Retícula radial ───────────────────────────────────────
-// Líneas de límite (posRad(i)): separadores hasta R=46, resto hasta R=44.
-// Líneas de centro de casilla (posRad(i+0.5)): pasan por el centro de cada dígito, hasta R=44.
 const grid = document.querySelector('#radial-grid');
 for (let i = 0; i < 60; i++) {
-  // Línea de límite (borde izquierdo de la casilla i)
   const a = posRad(i);
-
-  // Determina si esta línea debe sobresalir:
-  // - Si fib[i] es 0 o 5
-  // - O si la línea anterior (fib[i-1]) es 0 o 5
   let isZero = fib[i] === 0 || (i > 0 && fib[i-1] === 0);
   let isFive = fib[i] === 5 || (i > 0 && fib[i-1] === 5);
   let isSep = isZero || isFive;
@@ -52,25 +134,22 @@ for (let i = 0; i < 60; i++) {
   else if (isFive) line.classList.add('axis-five');
   else             line.classList.add('grid-fade');
   grid.append(line);
-
 }
 
 // ── Banda exterior: 60 dígitos ────────────────────────────
-// Dígitos centrados en su casilla (i+0.5). Círculos r=2 → gap de 2 unidades con R=36 y R=44.
 const ringDigits = document.querySelector('#ring-digits');
 for (let i = 0; i < 60; i++) {
   const d = fib[i];
   const [x, y] = pt(42, posRad(i + 0.5));
 
-  // Excepción del anillo 1: cada casilla conserva su mini-círculo.
   const c = mk('circle');
   c.setAttribute('cx', x.toFixed(3));
   c.setAttribute('cy', y.toFixed(3));
   c.setAttribute('r', '2');
   c.setAttribute('class', 'digit-cell');
+  c.dataset.idx = i;
   ringDigits.append(c);
 
-  // Orientación radial: el dígito apunta hacia el centro (pie hacia adentro)
   const angleDeg = (i + 0.5) * 6;
   const svgRot   = 90 - angleDeg;
 
@@ -79,28 +158,30 @@ for (let i = 0; i < 60; i++) {
   t.setAttribute('y', y.toFixed(3));
   t.setAttribute('transform', `rotate(${svgRot.toFixed(2)},${x.toFixed(3)},${y.toFixed(3)})`);
   t.setAttribute('class', d === 0 ? 'fib-zero' : d === 5 ? 'fib-five' : 'fib-digit');
+  t.dataset.idx = i;
   t.textContent = d;
   ringDigits.append(t);
 }
 
 // ── Segmentos: 12 grupos de 4 casillas ───────────────────
-// Cada divisor (0 o 5) queda fuera: el segmento ocupa las cuatro
-// casillas internas entre ese divisor y el siguiente.
 const segments = document.querySelector('#segments');
 const segmentLabels = document.querySelector('#segment-labels');
 const SEGMENT_IN = 33;
 const SEGMENT_OUT = 36;
 const SEGMENT_MID = (SEGMENT_IN + SEGMENT_OUT) / 2;
-const digitalRoot = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
 
 for (let i = 0; i < 12; i++) {
+  const startIdx = i * 5 + 1;
+  const endIdx = (i + 1) * 5;
+  const raw = rangeSum(startIdx, endIdx);
+  const value = digitalRoot(raw);
+  const labelAngle = posRad(i * 5 + 3);
+
   const segment = mk('path');
-  segment.setAttribute('d', segmentPath(posRad(i * 5 + 1), posRad((i + 1) * 5), SEGMENT_IN, SEGMENT_OUT));
+  segment.setAttribute('d', segmentPath(posRad(startIdx), posRad(endIdx), SEGMENT_IN, SEGMENT_OUT));
   segment.setAttribute('class', 'segment');
   segments.append(segment);
 
-  const value = digitalRoot(fib.slice(i * 5 + 1, i * 5 + 5).reduce((sum, digit) => sum + digit, 0));
-  const labelAngle = posRad(i * 5 + 3);
   const [x, y] = pt(SEGMENT_MID, labelAngle);
   const label = mk('text');
   label.setAttribute('x', x.toFixed(3));
@@ -109,10 +190,11 @@ for (let i = 0; i < 12; i++) {
   label.setAttribute('class', 'segment-label');
   label.textContent = value;
   segmentLabels.append(label);
+
+  registerSeg(segment, startIdx, endIdx, raw, labelAngle, SEGMENT_MID);
 }
 
 // ── Anillo 2: 4 segmentos grandes ─────────────────────────
-// Ancho: 4 (radio 24-28), mismo que anillo 1.
 const ring2Arcs = document.querySelector('#ring2-arcs');
 const ring2Segments = document.querySelector('#ring2-segments');
 const ring2Labels = document.querySelector('#ring2-labels');
@@ -120,12 +202,9 @@ const RING2_IN = 28;
 const RING2_OUT = 31;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
-// Mapeo de valores para las etiquetas del anillo 2
 const valueMap = { 2: 1, 9: 8, 3: 2, 5: 4 };
 const mapValue = v => valueMap[v] !== undefined ? valueMap[v] : v;
 
-// Segmentos identificados por número: 1, 8, 2, 4
-// Índices de línea para cada segmento
 const segments2 = [
   { name: 1, startIdx: 1, endIdx: 15 },
   { name: 8, startIdx: 16, endIdx: 30 },
@@ -134,23 +213,21 @@ const segments2 = [
 ];
 
 for (const seg of segments2) {
-  // Crear arcos (líneas del anillo)
   const arc = mk('path');
   arc.setAttribute('d', segmentPath(posRad(seg.startIdx), posRad(seg.endIdx % 60), RING2_IN, RING2_OUT));
   arc.setAttribute('class', 'ring2-arc');
   ring2Arcs.append(arc);
 
-  // Crear segmento (relleno)
+  const raw = rangeSum(seg.startIdx, seg.endIdx);
+  const value = digitalRoot(raw);
+  const displayValue = mapValue(value);
+  const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
+
   const segment = mk('path');
   segment.setAttribute('d', segmentPath(posRad(seg.startIdx), posRad(seg.endIdx % 60), RING2_IN, RING2_OUT));
   segment.setAttribute('class', 'ring2-segment');
   ring2Segments.append(segment);
 
-  // Suma de dígitos Fibonacci entre estos índices
-  const sliceEnd = seg.endIdx === 60 ? 60 : seg.endIdx;
-  const value = digitalRoot(fib.slice(seg.startIdx, sliceEnd).reduce((sum, digit) => sum + digit, 0));
-  const displayValue = mapValue(value);
-  const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
   const [x, y] = pt(RING2_MID, labelAngle);
   const label = mk('text');
   label.setAttribute('x', x.toFixed(3));
@@ -159,10 +236,11 @@ for (const seg of segments2) {
   label.setAttribute('class', 'ring2-label');
   label.textContent = displayValue;
   ring2Labels.append(label);
+
+  registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID);
 }
 
 // ── Anillo 4: segmento grande ────────────────────────────
-// Ancho: 4 (radio 8-12), mismo que anillo 2, con espaciado igual a anillo 1-2.
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
@@ -170,24 +248,18 @@ const RING4_IN = 23;
 const RING4_OUT = 26;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
-// Segmento del índice 16 al 45
 const ring4Seg = { startIdx: 16, endIdx: 45 };
 
-// Crear arco (línea del anillo)
 const arc4 = mk('path');
 arc4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
 arc4.setAttribute('class', 'ring4-arc');
 ring4Arcs.append(arc4);
 
-// Crear segmento (relleno)
 const segment4 = mk('path');
 segment4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
 segment4.setAttribute('class', 'ring4-segment');
 ring4Segments.append(segment4);
 
-// Suma de dígitos Fibonacci entre estos índices
-const sliceEnd4 = ring4Seg.endIdx === 60 ? 60 : ring4Seg.endIdx + 1;
-const value4 = digitalRoot(fib.slice(ring4Seg.startIdx, sliceEnd4).reduce((sum, digit) => sum + digit, 0));
 const labelAngle4 = posRad(ring4Seg.startIdx + (ring4Seg.endIdx - ring4Seg.startIdx) / 2);
 const [x4, y4] = pt(RING4_MID, labelAngle4);
 const label4 = mk('text');
@@ -198,8 +270,9 @@ label4.setAttribute('class', 'ring4-label');
 label4.textContent = '10 י';
 ring4Labels.append(label4);
 
+registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID);
+
 // ── Anillo 5: segmento grande ────────────────────────────
-// Índices = anillo 4 + 15: startIdx=31, endIdx=60
 const ring5Arcs = document.querySelector('#ring5-arcs');
 const ring5Segments = document.querySelector('#ring5-segments');
 const ring5Labels = document.querySelector('#ring5-labels');
@@ -219,8 +292,6 @@ segment5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx), posRad(ring5Se
 segment5.setAttribute('class', 'ring5-segment');
 ring5Segments.append(segment5);
 
-const sliceEnd5 = ring5Seg.endIdx === 60 ? 60 : ring5Seg.endIdx + 1;
-const value5 = digitalRoot(fib.slice(ring5Seg.startIdx, sliceEnd5).reduce((sum, digit) => sum + digit, 0));
 const labelAngle5 = posRad(ring5Seg.startIdx + (ring5Seg.endIdx - ring5Seg.startIdx) / 2);
 const [x5, y5] = pt(RING5_MID, labelAngle5);
 const label5 = mk('text');
@@ -231,8 +302,9 @@ label5.setAttribute('class', 'ring5-label');
 label5.textContent = '5 ה';
 ring5Labels.append(label5);
 
+registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID);
+
 // ── Anillo 6: segmento grande ────────────────────────────
-// Índices = anillo 5 + 15: startIdx=46, endIdx=75 (%60=15)
 const ring6Arcs = document.querySelector('#ring6-arcs');
 const ring6Segments = document.querySelector('#ring6-segments');
 const ring6Labels = document.querySelector('#ring6-labels');
@@ -262,8 +334,9 @@ label6.setAttribute('class', 'ring6-label');
 label6.textContent = '6 ו';
 ring6Labels.append(label6);
 
+registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID);
+
 // ── Anillo 7: segmento grande ────────────────────────────
-// Índices = anillo 6 + 15: startIdx=61 (%60=1), endIdx=90 (%60=30)
 const ring7Arcs = document.querySelector('#ring7-arcs');
 const ring7Segments = document.querySelector('#ring7-segments');
 const ring7Labels = document.querySelector('#ring7-labels');
@@ -293,6 +366,8 @@ label7.setAttribute('class', 'ring7-label');
 label7.textContent = '5 ה';
 ring7Labels.append(label7);
 
+registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID);
+
 // ── Control de animación ──────────────────────────────────
 const INITIAL_ROT = 273;
 const dial = document.querySelector('svg');
@@ -313,7 +388,6 @@ function stopAnimation() {
     dialAnimation.cancel();
     dialAnimation = null;
   }
-  // Normaliza el target para tomar siempre el camino más corto (≤180°)
   let target = INITIAL_ROT;
   const delta = ((target - angle) % 360 + 360) % 360;
   target = angle + (delta > 180 ? delta - 360 : delta);
