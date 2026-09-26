@@ -162,12 +162,12 @@ for (const seg of segments2) {
 }
 
 // ── Anillo 4: segmento grande ────────────────────────────
-// Ancho: 4 (radio 20-24), mismo que anillo 2.
+// Ancho: 4 (radio 8-12), mismo que anillo 2, con espaciado igual a anillo 1-2.
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
-const RING4_IN = 20;
-const RING4_OUT = 24;
+const RING4_IN = 8;
+const RING4_OUT = 12;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
 // Segmento del índice 16 al 45
