@@ -116,8 +116,8 @@ for (let i = 0; i < 12; i++) {
 const ring2Arcs = document.querySelector('#ring2-arcs');
 const ring2Segments = document.querySelector('#ring2-segments');
 const ring2Labels = document.querySelector('#ring2-labels');
-const RING2_IN = 24;
-const RING2_OUT = 28;
+const RING2_IN = 26;
+const RING2_OUT = 30;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
 // Mapeo de valores para las etiquetas del anillo 2
@@ -166,8 +166,8 @@ for (const seg of segments2) {
 const ring4Arcs = document.querySelector('#ring4-arcs');
 const ring4Segments = document.querySelector('#ring4-segments');
 const ring4Labels = document.querySelector('#ring4-labels');
-const RING4_IN = 8;
-const RING4_OUT = 12;
+const RING4_IN = 20;
+const RING4_OUT = 24;
 const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
 // Segmento del índice 16 al 45
