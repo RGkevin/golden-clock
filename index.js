@@ -120,6 +120,10 @@ const RING2_IN = 24;
 const RING2_OUT = 28;
 const RING2_MID = (RING2_IN + RING2_OUT) / 2;
 
+// Mapeo de valores para las etiquetas del anillo 2
+const valueMap = { 2: 1, 9: 8, 3: 2, 5: 4 };
+const mapValue = v => valueMap[v] !== undefined ? valueMap[v] : v;
+
 // Segmentos identificados por número: 1, 8, 2, 4
 // Índices de línea para cada segmento
 const segments2 = [
@@ -145,6 +149,7 @@ for (const seg of segments2) {
   // Suma de dígitos Fibonacci entre estos índices
   const sliceEnd = seg.endIdx === 60 ? 60 : seg.endIdx;
   const value = digitalRoot(fib.slice(seg.startIdx, sliceEnd).reduce((sum, digit) => sum + digit, 0));
+  const displayValue = mapValue(value);
   const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
   const [x, y] = pt(RING2_MID, labelAngle);
   const label = mk('text');
@@ -152,7 +157,7 @@ for (const seg of segments2) {
   label.setAttribute('y', y.toFixed(3));
   label.setAttribute('transform', `rotate(${(90 - (labelAngle * 180 / Math.PI)).toFixed(2)},${x.toFixed(3)},${y.toFixed(3)})`);
   label.setAttribute('class', 'ring2-label');
-  label.textContent = value;
+  label.textContent = displayValue;
   ring2Labels.append(label);
 }
 
