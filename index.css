@@ -80,8 +80,7 @@ svg {
   text-anchor: middle;
   dominant-baseline: central;
   font-family: monospace;
-  font-size: 3px;
-  font-weight: bold;
+  font-size: 2.5px;
   fill: var(--gold-bright);
   pointer-events: none;
 }
@@ -133,8 +132,7 @@ svg {
   text-anchor: middle;
   dominant-baseline: central;
   font-family: monospace;
-  font-size: 3px;
-  font-weight: bold;
+  font-size: 2.5px;
   fill: var(--gold-bright);
   pointer-events: none;
 }
@@ -162,8 +160,7 @@ svg {
   text-anchor: middle;
   dominant-baseline: central;
   font-family: monospace;
-  font-size: 3px;
-  font-weight: bold;
+  font-size: 2.5px;
   fill: var(--gold-bright);
   pointer-events: none;
 }
