@@ -198,6 +198,39 @@ label4.setAttribute('class', 'ring4-label');
 label4.textContent = '10 י';
 ring4Labels.append(label4);
 
+// ── Anillo 5: segmento grande ────────────────────────────
+// Índices = anillo 4 + 15: startIdx=31, endIdx=60
+const ring5Arcs = document.querySelector('#ring5-arcs');
+const ring5Segments = document.querySelector('#ring5-segments');
+const ring5Labels = document.querySelector('#ring5-labels');
+const RING5_IN = 18;
+const RING5_OUT = 21;
+const RING5_MID = (RING5_IN + RING5_OUT) / 2;
+
+const ring5Seg = { startIdx: 31, endIdx: 60 };
+
+const arc5 = mk('path');
+arc5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
+arc5.setAttribute('class', 'ring5-arc');
+ring5Arcs.append(arc5);
+
+const segment5 = mk('path');
+segment5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
+segment5.setAttribute('class', 'ring5-segment');
+ring5Segments.append(segment5);
+
+const sliceEnd5 = ring5Seg.endIdx === 60 ? 60 : ring5Seg.endIdx + 1;
+const value5 = digitalRoot(fib.slice(ring5Seg.startIdx, sliceEnd5).reduce((sum, digit) => sum + digit, 0));
+const labelAngle5 = posRad(ring5Seg.startIdx + (ring5Seg.endIdx - ring5Seg.startIdx) / 2);
+const [x5, y5] = pt(RING5_MID, labelAngle5);
+const label5 = mk('text');
+label5.setAttribute('x', x5.toFixed(3));
+label5.setAttribute('y', y5.toFixed(3));
+label5.setAttribute('transform', `rotate(${(90 - (labelAngle5 * 180 / Math.PI)).toFixed(2)},${x5.toFixed(3)},${y5.toFixed(3)})`);
+label5.setAttribute('class', 'ring5-label');
+label5.textContent = value5;
+ring5Labels.append(label5);
+
 // ── Control de animación ──────────────────────────────────
 const dial = document.querySelector('svg');
 const animationToggle = document.querySelector('#animation-toggle');
