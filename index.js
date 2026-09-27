@@ -76,10 +76,26 @@ function makeDecompEl(rawSum, labelAngle, midR) {
   return el;
 }
 
-function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR) {
+function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR, level) {
   const decompEl = rawSum != null ? makeDecompEl(rawSum, labelAngle, midR) : null;
-  allInteractive.push({ pathEl, startIdx, endIdx, decompEl });
+  allInteractive.push({ pathEl, startIdx, endIdx, decompEl, level });
   pathEl.addEventListener('click', () => handleSegClick(pathEl));
+}
+
+function rangesOverlap(s1, e1, s2, e2) {
+  const set2 = rangeSet(s2, e2);
+  for (let i = 0; i < e1 - s1; i++) if (set2.has((s1 + i) % 60)) return true;
+  return false;
+}
+
+function clearAll() {
+  allInteractive.forEach(s => {
+    s.pathEl.classList.remove('seg-dimmed');
+    if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
+  });
+  document.querySelectorAll('[data-idx]').forEach(el =>
+    el.classList.remove('digit-lit', 'digit-dim')
+  );
 }
 
 function handleSegClick(pathEl) {
@@ -87,33 +103,31 @@ function handleSegClick(pathEl) {
   if (!seg) return;
 
   if (selectedSeg === seg) {
-    // Deselect
     selectedSeg = null;
-    allInteractive.forEach(s => {
-      s.pathEl.classList.remove('seg-dimmed');
-      if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
-    });
-    document.querySelectorAll('[data-idx]').forEach(el =>
-      el.classList.remove('digit-lit', 'digit-dim')
-    );
-  } else {
-    selectedSeg = seg;
+    clearAll();
+    return;
+  }
+
+  selectedSeg = seg;
+  clearAll();
+
+  if (seg.level === 1) {
+    // Ring 1: solo afecta dígitos del anillo exterior
     const lit = rangeSet(seg.startIdx, seg.endIdx);
-
-    allInteractive.forEach(s => {
-      if (s === seg) {
-        s.pathEl.classList.remove('seg-dimmed');
-        if (s.decompEl) s.decompEl.classList.add('decomp-visible');
-      } else {
-        s.pathEl.classList.add('seg-dimmed');
-        if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
-      }
-    });
-
+    if (seg.decompEl) seg.decompEl.classList.add('decomp-visible');
     document.querySelectorAll('[data-idx]').forEach(el => {
       const idx = parseInt(el.dataset.idx);
       el.classList.toggle('digit-lit', lit.has(idx));
       el.classList.toggle('digit-dim', !lit.has(idx));
+    });
+  } else {
+    // Ring N > 1: ilumina los segmentos del ring N-1 que se solapan con este rango
+    const parentLevel = seg.level - 1;
+    if (seg.decompEl) seg.decompEl.classList.add('decomp-visible');
+    allInteractive.forEach(s => {
+      if (s.level !== parentLevel) return;
+      const overlaps = rangesOverlap(s.startIdx, s.endIdx, seg.startIdx, seg.endIdx);
+      s.pathEl.classList.toggle('seg-dimmed', !overlaps);
     });
   }
 }
@@ -191,7 +205,7 @@ for (let i = 0; i < 12; i++) {
   label.textContent = value;
   segmentLabels.append(label);
 
-  registerSeg(segment, startIdx, endIdx, raw, labelAngle, SEGMENT_MID);
+  registerSeg(segment, startIdx, endIdx, raw, labelAngle, SEGMENT_MID, 1);
 }
 
 // ── Anillo 2: 4 segmentos grandes ─────────────────────────
@@ -237,7 +251,7 @@ for (const seg of segments2) {
   label.textContent = displayValue;
   ring2Labels.append(label);
 
-  registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID);
+  registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID, 2);
 }
 
 // ── Anillo 4: segmento grande ────────────────────────────
@@ -270,7 +284,7 @@ label4.setAttribute('class', 'ring4-label');
 label4.textContent = '10 י';
 ring4Labels.append(label4);
 
-registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID);
+registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID, 3);
 
 // ── Anillo 5: segmento grande ────────────────────────────
 const ring5Arcs = document.querySelector('#ring5-arcs');
@@ -302,7 +316,7 @@ label5.setAttribute('class', 'ring5-label');
 label5.textContent = '5 ה';
 ring5Labels.append(label5);
 
-registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID);
+registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID, 4);
 
 // ── Anillo 6: segmento grande ────────────────────────────
 const ring6Arcs = document.querySelector('#ring6-arcs');
@@ -334,7 +348,7 @@ label6.setAttribute('class', 'ring6-label');
 label6.textContent = '6 ו';
 ring6Labels.append(label6);
 
-registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID);
+registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID, 5);
 
 // ── Anillo 7: segmento grande ────────────────────────────
 const ring7Arcs = document.querySelector('#ring7-arcs');
@@ -366,7 +380,7 @@ label7.setAttribute('class', 'ring7-label');
 label7.textContent = '5 ה';
 ring7Labels.append(label7);
 
-registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID);
+registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID, 6);
 
 // ── Control de animación ──────────────────────────────────
 const INITIAL_ROT = 273;
