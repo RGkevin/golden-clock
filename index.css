@@ -49,6 +49,12 @@ svg {
   transform-origin: center;
 }
 
+/* Ocultar controles y footer en desktop */
+section:has(.animation-control),
+section:has(.text-center) {
+  display: none;
+}
+
 /* ── Mobile: reloj anclado al ancho del dispositivo ────── */
 @media (max-width: 600px) {
   body {
@@ -63,6 +69,10 @@ svg {
     width: 97vw;
     height: auto;
     max-width: none;
+  }
+  section:has(.animation-control),
+  section:has(.text-center) {
+    display: flex;
   }
 }
 
