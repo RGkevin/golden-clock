@@ -3,17 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>El Reloj Áureo - El tetragrámaton en la sucesión de Fibonacci</title>
+    <title>Reloj de la Formación - El tetragrámaton en la sucesión de Fibonacci</title>
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
     <section>
-      <h1>El Reloj Áureo</h1>
+      <h1>Reloj de la Formación</h1>
       <h5>Kevin López</h5>
-      <div class="animation-control" role="group" aria-label="Velocidad de animación">
-        <button class="anim-btn" data-duration="60000">1 digit/s</button>
-        <button class="anim-btn" data-duration="150000">slow mo</button>
-      </div>
     </section>
     <section>
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -71,6 +67,12 @@
         <!-- Textos de descomposición (visibles al seleccionar un segmento) -->
         <g id="decomp-labels" pointer-events="none"></g>
       </svg>
+    </section>
+    <section>
+      <div class="animation-control" role="group" aria-label="Velocidad de animación">
+        <button class="anim-btn" data-duration="60000">1 digit/s</button>
+        <button class="anim-btn" data-duration="150000">slow mo</button>
+      </div>
     </section>
     <section>
       <p class="text-center">El <a href="https://es.wikipedia.org/wiki/Tetragrámaton">tetragrámaton</a> en la <a href="https://es.wikipedia.org/wiki/Sucesión_de_Fibonacci">secuencia de fibonacci</a></p>

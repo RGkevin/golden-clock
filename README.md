@@ -1,6 +1,6 @@
-# El Reloj Áureo
+# Reloj de la Formación
 
-[![El Reloj Áureo y el tetragrámaton](assets/tetragrama.png)](https://rgkevin.github.io/golden-clock/)
+[![Reloj de la Formación y el tetragrámaton](assets/tetragrama.png)](https://rgkevin.github.io/golden-clock/)
 
 Una exploración de cómo el [tetragrámaton](https://es.wikipedia.org/wiki/Tetragrámaton) **YHVH (10, 5, 6, 5)** aparece al transformar la [sucesión de Fibonacci](https://es.wikipedia.org/wiki/Sucesión_de_Fibonacci) mediante aritmética modular, agrupaciones y raíces digitales.
 
