@@ -71,9 +71,18 @@
       </svg>
     </section>
     <section>
-      <div class="animation-control" role="group" aria-label="Velocidad de animación">
-        <button class="anim-btn" data-duration="60000">1 digit/s</button>
-        <button class="anim-btn" data-duration="150000">slow mo</button>
+      <div class="controls-row">
+        <div class="animation-control" role="group" aria-label="Velocidad de animación">
+          <button class="anim-btn" data-duration="60000">1 digit/s</button>
+          <button class="anim-btn" data-duration="150000">slow mo</button>
+        </div>
+        <div class="control-group">
+          <span class="control-label">Orientación</span>
+          <div class="orient-control" role="group" aria-label="Orientación de la secuencia">
+            <button class="orient-btn active" data-dir="cw">Normal</button>
+            <button class="orient-btn" data-dir="ccw">Anti horario</button>
+          </div>
+        </div>
       </div>
     </section>
     <section>
