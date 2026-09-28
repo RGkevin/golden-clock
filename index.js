@@ -444,7 +444,7 @@ function startAnimation(duration) {
     dialAnimation.cancel();
   }
   dialAnimation = dial.animate(
-    [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${angle + 360}deg)` }],
+    [{ transform: `rotate(${angle}deg)` }, { transform: `rotate(${angle + direction * 360}deg)` }],
     { duration, iterations: Infinity, easing: 'linear' }
   );
 }
