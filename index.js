@@ -13,7 +13,7 @@ for (let i = 0; i < 60; i++) {
 // -1 = CW (Normal / horario), 1 = CCW (Anti horario)
 let direction = -1;
 
-const posRad = i => direction * i * 6 * D2R;
+const posRad = i => i * 6 * D2R;
 
 // Punto en coords SVG (Y invertido respecto a matemáticas)
 const pt = (r, a) => [CX + r * Math.cos(a), CY - r * Math.sin(a)];
@@ -25,19 +25,19 @@ function segmentPath(a, b, rIn, rOut) {
   const [x3, y3] = pt(rIn, b);
   const [x4, y4] = pt(rIn, a);
   const f = n => n.toFixed(3);
-  // CCW: outer sweep=0, inner sweep=1 · CW: outer sweep=1, inner sweep=0
-  const os = direction === 1 ? 0 : 1;
-  const is_ = direction === 1 ? 1 : 0;
-  return `M${f(x1)} ${f(y1)} A${rOut} ${rOut} 0 0 ${os} ${f(x2)} ${f(y2)} `
-       + `L${f(x3)} ${f(y3)} A${rIn} ${rIn} 0 0 ${is_} ${f(x4)} ${f(y4)} Z`;
+  return `M${f(x1)} ${f(y1)} A${rOut} ${rOut} 0 0 0 ${f(x2)} ${f(y2)} `
+       + `L${f(x3)} ${f(y3)} A${rIn} ${rIn} 0 0 1 ${f(x4)} ${f(y4)} Z`;
 }
 
 function mk(tag) { return document.createElementNS(svgNS, tag); }
 
+// En CW el índice i muestra el valor que en CCW estaba en (60-i)%60
+const fibAt = i => fib[direction === -1 ? (60 - i) % 60 : i];
+
 // Suma de dígitos Fibonacci en un rango (soporta wrap)
 function rangeSum(startIdx, endIdx) {
   let s = 0;
-  for (let i = 0; i < endIdx - startIdx; i++) s += fib[(startIdx + i) % 60];
+  for (let i = 0; i < endIdx - startIdx; i++) s += fibAt((startIdx + i) % 60);
   return s;
 }
 
@@ -172,7 +172,7 @@ function renderClock() {
   // ── Banda exterior: 60 dígitos ────────────────────────────
   const ringDigits = document.querySelector('#ring-digits');
   for (let i = 0; i < 60; i++) {
-    const d = fib[i];
+    const d = fibAt(i);
     const [x, y] = pt(42, posRad(i + 0.5));
 
     const c = mk('circle');
@@ -183,7 +183,7 @@ function renderClock() {
     c.dataset.idx = i;
     ringDigits.append(c);
 
-    const svgRot = 90 - (posRad(i + 0.5) * 180 / Math.PI);
+    const svgRot = 90 - (i + 0.5) * 6;
 
     const t = mk('text');
     t.setAttribute('x', x.toFixed(3));
@@ -404,8 +404,8 @@ function renderClock() {
 renderClock();
 
 // ── Control de animación ──────────────────────────────────
-// 270° base + corrección de medio-casilla: +3° en CCW, -3° en CW
-const initialRot = () => 270 + direction * 3;
+// +3° ancla el centro de casilla 0 en 12:00 (offset de medio-casilla, siempre CCW)
+const INITIAL_ROT = 273;
 const dial = document.querySelector('svg');
 const animBtns = document.querySelectorAll('.anim-btn');
 let dialAnimation = null;
@@ -424,7 +424,7 @@ function stopAnimation() {
     dialAnimation.cancel();
     dialAnimation = null;
   }
-  let target = initialRot();
+  let target = INITIAL_ROT;
   const delta = ((target - angle) % 360 + 360) % 360;
   target = angle + (delta > 180 ? delta - 360 : delta);
   const anim = dial.animate(
@@ -432,7 +432,7 @@ function stopAnimation() {
     { duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
   );
   anim.onfinish = () => {
-    dial.style.transform = `rotate(${initialRot()}deg)`;
+    dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
     anim.cancel();
   };
 }
@@ -464,7 +464,7 @@ animBtns.forEach(btn => {
   });
 });
 
-dial.style.transform = `rotate(${initialRot()}deg)`;
+dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
 
 // ── Control de orientación ────────────────────────────────
 const orientBtns = document.querySelectorAll('.orient-btn');
@@ -486,7 +486,7 @@ orientBtns.forEach(btn => {
         dialAnimation.cancel();
         dialAnimation = null;
       }
-      dial.style.transform = `rotate(${initialRot()}deg)`;
+      dial.style.transform = `rotate(${INITIAL_ROT}deg)`;
     }
 
     renderClock();
