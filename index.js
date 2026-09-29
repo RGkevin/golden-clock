@@ -282,6 +282,7 @@ function renderClock() {
     { name: 4, startIdx: 46, endIdx: 60 }
   ];
 
+  const ring2Info = []; // display values para la cadena de anillos internos
   for (const seg of segments2) {
     const arc = mk('path');
     arc.setAttribute('d', segmentPath(posRad(seg.startIdx), posRad(seg.endIdx % 60), RING2_IN, RING2_OUT));
@@ -296,6 +297,7 @@ function renderClock() {
     const raw = rangeSum(seg.startIdx, seg.endIdx);
     const value = digitalRoot(raw);
     const displayValue = mapValue(value);
+    ring2Info.push({ startIdx: seg.startIdx, endIdx: seg.endIdx, displayValue });
     const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
 
     const segment = mk('path');
@@ -315,6 +317,32 @@ function renderClock() {
     registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID, 2, arc, label, ring2DecompValues);
   }
 
+  // ── Cadena de anillos interiores: rangos + fórmulas ──────
+  const [r4s, r4e] = adjustedRange(16, 45);
+  const [r5s, r5e] = adjustedRange(31, 60);
+  const [r6s, r6e] = adjustedRange(46, 75);
+  const [r7s, r7e] = adjustedRange(61, 90);
+
+  const segsFor = (s, e) => ring2Info.filter(s2 => rangesOverlap(s2.startIdx, s2.endIdx, s, e));
+  const r4Segs = segsFor(r4s, r4e);
+  const r5Segs = segsFor(r5s, r5e);
+  const r6Segs = segsFor(r6s, r6e);
+  const r7Segs = segsFor(r7s, r7e);
+
+  const ring4DecompValues = r4Segs.map(s => s.displayValue);
+  const ring4Sum = ring4DecompValues.reduce((a, b) => a + b, 0);
+
+  const r5NewSeg = r5Segs.find(s => !r4Segs.includes(s));
+  const ring5DecompValues = [ring4Sum, r5NewSeg?.displayValue ?? 0];
+  const ring5DR = digitalRoot(ring5DecompValues.reduce((a, b) => a + b, 0));
+
+  const r6NewSeg = r6Segs.find(s => !r5Segs.includes(s));
+  const ring6DecompValues = [ring5DR, r6NewSeg?.displayValue ?? 0];
+  const ring6DR = digitalRoot(ring6DecompValues.reduce((a, b) => a + b, 0));
+
+  const r7NewSeg = r7Segs.find(s => !r6Segs.includes(s));
+  const ring7DecompValues = [ring6DR, r7NewSeg?.displayValue ?? 0];
+
   // ── Anillo 4: segmento grande ────────────────────────────
   const ring4Arcs = document.querySelector('#ring4-arcs');
   const ring4Segments = document.querySelector('#ring4-segments');
@@ -323,7 +351,6 @@ function renderClock() {
   const RING4_OUT = 26;
   const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
-  const [r4s, r4e] = adjustedRange(16, 45);
   const ring4Seg = { startIdx: r4s, endIdx: r4e };
 
   const arc4 = mk('path');
@@ -346,7 +373,7 @@ function renderClock() {
   label4.textContent = '10 · י';
   ring4Labels.append(label4);
 
-  registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID, 3, arc4, label4);
+  registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, 1, labelAngle4, RING4_MID, 3, arc4, label4, ring4DecompValues);
 
   // ── Anillo 5: segmento grande ────────────────────────────
   const ring5Arcs = document.querySelector('#ring5-arcs');
@@ -356,7 +383,6 @@ function renderClock() {
   const RING5_OUT = 21;
   const RING5_MID = (RING5_IN + RING5_OUT) / 2;
 
-  const [r5s, r5e] = adjustedRange(31, 60);
   const ring5Seg = { startIdx: r5s, endIdx: r5e };
 
   const arc5 = mk('path');
@@ -379,7 +405,7 @@ function renderClock() {
   label5.textContent = '5 · ה';
   ring5Labels.append(label5);
 
-  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID, 4, arc5, label5);
+  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, 1, labelAngle5, RING5_MID, 4, arc5, label5, ring5DecompValues);
 
   // ── Anillo 6: segmento grande ────────────────────────────
   const ring6Arcs = document.querySelector('#ring6-arcs');
@@ -389,7 +415,6 @@ function renderClock() {
   const RING6_OUT = 16;
   const RING6_MID = (RING6_IN + RING6_OUT) / 2;
 
-  const [r6s, r6e] = adjustedRange(46, 75);
   const ring6Seg = { startIdx: r6s, endIdx: r6e };
 
   const arc6 = mk('path');
@@ -412,7 +437,7 @@ function renderClock() {
   label6.textContent = '6 · ו';
   ring6Labels.append(label6);
 
-  registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID, 5, arc6, label6);
+  registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, 1, labelAngle6, RING6_MID, 5, arc6, label6, ring6DecompValues);
 
   // ── Anillo 7: segmento grande ────────────────────────────
   const ring7Arcs = document.querySelector('#ring7-arcs');
@@ -422,7 +447,6 @@ function renderClock() {
   const RING7_OUT = 11;
   const RING7_MID = (RING7_IN + RING7_OUT) / 2;
 
-  const [r7s, r7e] = adjustedRange(61, 90);
   const ring7Seg = { startIdx: r7s, endIdx: r7e };
 
   const arc7 = mk('path');
@@ -445,7 +469,7 @@ function renderClock() {
   label7.textContent = '5 · ה';
   ring7Labels.append(label7);
 
-  registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID, 6, arc7, label7);
+  registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, 1, labelAngle7, RING7_MID, 6, arc7, label7, ring7DecompValues);
 }
 
 renderClock();
