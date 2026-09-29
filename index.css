@@ -93,7 +93,7 @@ svg {
 /* Líneas regulares: degradado dorado desde el centro */
 #radial-grid .grid-fade {
   stroke: url(#grid-fade);
-  stroke-opacity: 1;
+  stroke-opacity: 0.5;
 }
 
 /* Separadores de 5: dorado desvanecido, más grueso */
@@ -114,7 +114,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: fill;
@@ -161,7 +161,7 @@ svg {
 .ring2-arc {
   fill: none;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -190,7 +190,7 @@ svg {
 .ring4-arc {
   fill: none;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -200,7 +200,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   pointer-events: fill;
   cursor: pointer;
   transition: opacity 0.4s;
@@ -218,7 +218,7 @@ svg {
 .ring5-arc {
   fill: none;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -228,7 +228,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   pointer-events: fill;
   cursor: pointer;
   transition: opacity 0.4s;
@@ -246,7 +246,7 @@ svg {
 .ring6-arc {
   fill: none;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -256,7 +256,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   pointer-events: fill;
   cursor: pointer;
   transition: opacity 0.4s;
@@ -274,7 +274,7 @@ svg {
 .ring7-arc {
   fill: none;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   stroke-opacity: 1;
   vector-effect: none;
   pointer-events: none;
@@ -284,7 +284,7 @@ svg {
   fill: #000;
   fill-opacity: 0.2;
   stroke: var(--gold-line);
-  stroke-width: 0.32px;
+  stroke-width: 0.16px;
   pointer-events: fill;
   cursor: pointer;
   transition: opacity 0.4s;
@@ -315,7 +315,7 @@ svg {
   text-anchor: middle;
   dominant-baseline: central;
   font-family: "EB Garamond", Georgia, serif;
-  font-size: 1.5px;
+  font-size: 1.275px;
   fill: var(--gold-bright);
   pointer-events: none;
   transition: opacity 0.4s;

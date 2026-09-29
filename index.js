@@ -50,14 +50,16 @@ function rangeSet(startIdx, endIdx) {
 
 const digitalRoot = n => n === 0 ? 0 : ((n - 1) % 9) + 1;
 
-// Genera texto de descomposición: "23=2+3=5"
-function mkDecompStr(rawSum) {
-  if (rawSum <= 9) return null;
-  const digits = String(rawSum).split('').map(Number);
-  const s1 = digits.reduce((a, b) => a + b, 0);
-  if (s1 <= 9) return `${rawSum}=${digits.join('+')}=${s1}`;
+// Genera texto de descomposición a partir de un array de valores
+function mkDecompStr(values) {
+  const rawSum = values.reduce((a, b) => a + b, 0);
+  const base = `${values.join('+')}=${rawSum}`;
+  if (rawSum <= 9) return base;
+  const d1 = String(rawSum).split('').map(Number);
+  const s1 = d1.reduce((a, b) => a + b, 0);
+  if (s1 <= 9) return `${base}=${d1.join('+')}=${s1}`;
   const d2 = String(s1).split('').map(Number);
-  return `${rawSum}=${digits.join('+')}=${s1}=${d2.join('+')}=${d2.reduce((a,b)=>a+b,0)}`;
+  return `${base}=${d1.join('+')}=${s1}=${d2.join('+')}=${d2.reduce((a,b)=>a+b,0)}`;
 }
 
 // ── Estado de interactividad ──────────────────────────────────
@@ -65,10 +67,10 @@ const allInteractive = [];
 let selectedSeg = null;
 const decompLabels = document.querySelector('#decomp-labels');
 
-function makeDecompEl(rawSum, labelAngle, midR) {
-  const text = mkDecompStr(rawSum);
+function makeDecompEl(values, labelAngle, midR) {
+  const text = mkDecompStr(values);
   if (!text) return null;
-  const r = midR - 1.8;
+  const r = midR;
   const [dx, dy] = pt(r, labelAngle);
   const rotDeg = 90 - (labelAngle * 180 / Math.PI);
   const el = mk('text');
@@ -81,10 +83,16 @@ function makeDecompEl(rawSum, labelAngle, midR) {
   return el;
 }
 
-function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR, level) {
-  const decompEl = rawSum != null ? makeDecompEl(rawSum, labelAngle, midR) : null;
-  allInteractive.push({ pathEl, startIdx, endIdx, decompEl, level });
+function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR, level, arcEl = null, labelEl = null, decompValues = null) {
+  const decompEl = rawSum != null && decompValues != null ? makeDecompEl(decompValues, labelAngle, midR) : null;
+  allInteractive.push({ pathEl, arcEl, labelEl, startIdx, endIdx, decompEl, level });
   pathEl.addEventListener('click', () => handleSegClick(pathEl));
+}
+
+function setSegDimmed(s, isDimmed) {
+  s.pathEl.classList.toggle('seg-dimmed', isDimmed);
+  if (s.arcEl) s.arcEl.classList.toggle('seg-dimmed', isDimmed);
+  if (s.labelEl) s.labelEl.classList.toggle('seg-dimmed', isDimmed);
 }
 
 function rangesOverlap(s1, e1, s2, e2) {
@@ -96,6 +104,8 @@ function rangesOverlap(s1, e1, s2, e2) {
 function clearAll() {
   allInteractive.forEach(s => {
     s.pathEl.classList.remove('seg-dimmed');
+    if (s.arcEl) s.arcEl.classList.remove('seg-dimmed');
+    if (s.labelEl) s.labelEl.classList.remove('seg-dimmed');
     if (s.decompEl) s.decompEl.classList.remove('decomp-visible');
   });
   document.querySelectorAll('[data-idx]').forEach(el =>
@@ -117,7 +127,7 @@ function handleSegClick(pathEl) {
   clearAll();
 
   if (seg.level === 1) {
-    // Ring 1: solo afecta dígitos del anillo exterior
+    // Ring 1: resalta dígitos del anillo exterior, dimea todos los demás segmentos
     const lit = rangeSet(seg.startIdx, seg.endIdx);
     if (seg.decompEl) seg.decompEl.classList.add('decomp-visible');
     document.querySelectorAll('[data-idx]').forEach(el => {
@@ -125,15 +135,29 @@ function handleSegClick(pathEl) {
       el.classList.toggle('digit-lit', lit.has(idx));
       el.classList.toggle('digit-dim', !lit.has(idx));
     });
+    allInteractive.forEach(s => {
+      if (s !== seg) setSegDimmed(s, true);
+    });
   } else {
-    // Ring N > 1: ilumina los segmentos del ring N-1 que se solapan con este rango
+    // Ring N > 1: solo ilumina los segmentos del ring N-1 que solapan; dimea todo lo demás
     const parentLevel = seg.level - 1;
     if (seg.decompEl) seg.decompEl.classList.add('decomp-visible');
     allInteractive.forEach(s => {
-      if (s.level !== parentLevel) return;
-      const overlaps = rangesOverlap(s.startIdx, s.endIdx, seg.startIdx, seg.endIdx);
-      s.pathEl.classList.toggle('seg-dimmed', !overlaps);
+      if (s === seg) return; // el segmento clickeado permanece visible
+      if (s.level === parentLevel) {
+        const overlaps = rangesOverlap(s.startIdx, s.endIdx, seg.startIdx, seg.endIdx);
+        if (!overlaps) {
+          setSegDimmed(s, true);
+        }
+      } else {
+        setSegDimmed(s, true);
+      }
     });
+  }
+
+  // Ocultar solo el label del segmento clickeado cuando su fórmula es visible
+  if (seg.decompEl && seg.labelEl) {
+    seg.labelEl.classList.add('seg-dimmed');
   }
 }
 
@@ -202,12 +226,17 @@ function renderClock() {
   const SEGMENT_OUT = 36;
   const SEGMENT_MID = (SEGMENT_IN + SEGMENT_OUT) / 2;
 
+  const ring1Segs = []; // guardamos {startIdx, endIdx, value} para ring-2
   for (let i = 0; i < 12; i++) {
     const startIdx = i * 5 + 1;
     const endIdx = (i + 1) * 5;
     const raw = rangeSum(startIdx, endIdx);
     const value = digitalRoot(raw);
     const labelAngle = posRad(i * 5 + 3);
+
+    const fibValues = [];
+    for (let j = 0; j < endIdx - startIdx; j++) fibValues.push(fibAt((startIdx + j) % 60));
+    ring1Segs.push({ startIdx, endIdx, value });
 
     const segment = mk('path');
     segment.setAttribute('d', segmentPath(posRad(startIdx), posRad(endIdx), SEGMENT_IN, SEGMENT_OUT));
@@ -223,7 +252,7 @@ function renderClock() {
     label.textContent = value;
     segmentLabels.append(label);
 
-    registerSeg(segment, startIdx, endIdx, raw, labelAngle, SEGMENT_MID, 1);
+    registerSeg(segment, startIdx, endIdx, raw, labelAngle, SEGMENT_MID, 1, null, label, fibValues);
   }
 
   // ── Anillo 2: 4 segmentos grandes ─────────────────────────
@@ -250,6 +279,11 @@ function renderClock() {
     arc.setAttribute('class', 'ring2-arc');
     ring2Arcs.append(arc);
 
+    // Valores de ring-2 = digitalRoot de cada segmento de ring-1 contenido en este rango
+    const ring2DecompValues = ring1Segs
+      .filter(r1 => r1.startIdx >= seg.startIdx && r1.endIdx <= seg.endIdx)
+      .map(r1 => r1.value);
+
     const raw = rangeSum(seg.startIdx, seg.endIdx);
     const value = digitalRoot(raw);
     const displayValue = mapValue(value);
@@ -269,7 +303,7 @@ function renderClock() {
     label.textContent = displayValue;
     ring2Labels.append(label);
 
-    registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID, 2);
+    registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID, 2, arc, label, ring2DecompValues);
   }
 
   // ── Anillo 4: segmento grande ────────────────────────────
@@ -302,7 +336,7 @@ function renderClock() {
   label4.textContent = '10 · י';
   ring4Labels.append(label4);
 
-  registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID, 3);
+  registerSeg(segment4, ring4Seg.startIdx, ring4Seg.endIdx + 1, null, labelAngle4, RING4_MID, 3, arc4, label4);
 
   // ── Anillo 5: segmento grande ────────────────────────────
   const ring5Arcs = document.querySelector('#ring5-arcs');
@@ -334,7 +368,7 @@ function renderClock() {
   label5.textContent = '5 · ה';
   ring5Labels.append(label5);
 
-  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID, 4);
+  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, null, labelAngle5, RING5_MID, 4, arc5, label5);
 
   // ── Anillo 6: segmento grande ────────────────────────────
   const ring6Arcs = document.querySelector('#ring6-arcs');
@@ -366,7 +400,7 @@ function renderClock() {
   label6.textContent = '6 · ו';
   ring6Labels.append(label6);
 
-  registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID, 5);
+  registerSeg(segment6, ring6Seg.startIdx, ring6Seg.endIdx, null, labelAngle6, RING6_MID, 5, arc6, label6);
 
   // ── Anillo 7: segmento grande ────────────────────────────
   const ring7Arcs = document.querySelector('#ring7-arcs');
@@ -398,7 +432,7 @@ function renderClock() {
   label7.textContent = '5 · ה';
   ring7Labels.append(label7);
 
-  registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID, 6);
+  registerSeg(segment7, ring7Seg.startIdx, ring7Seg.endIdx, null, labelAngle7, RING7_MID, 6, arc7, label7);
 }
 
 renderClock();
