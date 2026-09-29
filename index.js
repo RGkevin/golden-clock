@@ -92,9 +92,9 @@ function makeDecompEl(values, labelAngle, midR) {
   return el;
 }
 
-function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR, level, arcEl = null, labelEl = null, decompValues = null) {
+function registerSeg(pathEl, startIdx, endIdx, rawSum, labelAngle, midR, level, arcEl = null, labelEl = null, decompValues = null, additionalHighlights = []) {
   const decompEl = rawSum != null && decompValues != null ? makeDecompEl(decompValues, labelAngle, midR) : null;
-  allInteractive.push({ pathEl, arcEl, labelEl, startIdx, endIdx, decompEl, level });
+  allInteractive.push({ pathEl, arcEl, labelEl, startIdx, endIdx, decompEl, level, additionalHighlights });
   pathEl.addEventListener('click', () => handleSegClick(pathEl));
 }
 
@@ -155,12 +155,15 @@ function handleSegClick(pathEl) {
       if (s === seg) return; // el segmento clickeado permanece visible
       if (s.level === parentLevel) {
         const overlaps = rangesOverlap(s.startIdx, s.endIdx, seg.startIdx, seg.endIdx);
-        if (!overlaps) {
-          setSegDimmed(s, true);
-        }
+        if (!overlaps) setSegDimmed(s, true);
       } else {
         setSegDimmed(s, true);
       }
+    });
+    // Des-opacar segmentos adicionales (ej. ring-2 para rings 5-7)
+    seg.additionalHighlights.forEach(ph => {
+      const entry = allInteractive.find(s => s.pathEl === ph);
+      if (entry) setSegDimmed(entry, false);
     });
   }
 
@@ -297,7 +300,6 @@ function renderClock() {
     const raw = rangeSum(seg.startIdx, seg.endIdx);
     const value = digitalRoot(raw);
     const displayValue = mapValue(value);
-    ring2Info.push({ startIdx: seg.startIdx, endIdx: seg.endIdx, displayValue });
     const labelAngle = posRad(seg.startIdx + (seg.endIdx - seg.startIdx) / 2);
 
     const segment = mk('path');
@@ -313,6 +315,10 @@ function renderClock() {
     label.setAttribute('class', 'ring2-label');
     label.textContent = displayValue;
     ring2Labels.append(label);
+
+    // Guardar la referencia después de crear el segmento: los anillos 5-7
+    // usan este elemento para resaltar el segmento nuevo que incorporan.
+    ring2Info.push({ startIdx: seg.startIdx, endIdx: seg.endIdx, displayValue, pathEl: segment });
 
     registerSeg(segment, seg.startIdx, seg.endIdx, raw, labelAngle, RING2_MID, 2, arc, label, ring2DecompValues);
   }
@@ -405,7 +411,7 @@ function renderClock() {
   label5.textContent = '5 · ה';
   ring5Labels.append(label5);
 
-  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, 1, labelAngle5, RING5_MID, 4, arc5, label5, ring5DecompValues);
+  registerSeg(segment5, ring5Seg.startIdx, ring5Seg.endIdx, 1, labelAngle5, RING5_MID, 4, arc5, label5, ring5DecompValues, r5NewSeg ? [r5NewSeg.pathEl] : []);
 
   // ── Anillo 6: segmento grande ────────────────────────────
   const ring6Arcs = document.querySelector('#ring6-arcs');
