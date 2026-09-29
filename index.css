@@ -1,176 +1,511 @@
 /*
-* Made by Kevin López
+* Creado por Kevin López
 */
 
 :root {
-  --background-0: black;
-  --text-1: green;
-  --text-2: orange;
-  --text-3: skyblue;
-  --text-4: blue;
-  --text-5: white;
-  --text-6: var(--text-5);
+  --bg:          #040d1f;   /* azul marino profundo */
+  --gold-line:   #C9A96E;   /* dorado pálido — líneas estructurales */
+  --gold-bright: #FFD700;   /* dorado brillante — números grandes */
+  --gold-glow:   #B8860B;   /* dorado oscuro — halo secundario */
+  --zero:        #00e5ff;   /* cian — separadores 0 */
+  --five:        #93c5fd;   /* azul cielo — separadores 5 */
+  --digit:       #dbeafe;   /* blanco-azulado — dígitos normales */
 }
 
 *,
-*:after,
-*:before {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 body {
-  display: -ms-grid;
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  font-family: "Google Sans", sans-serif, system-ui;
-  overflow: hidden;
-  background: var(--background-0);
-  color: var(--text-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  overflow: auto;
+  font-family: "EB Garamond", Georgia, serif;
+  background: var(--bg);
+  color: var(--digit);
+}
+
+section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+section:has(svg) {
+  flex: 1;
+  min-height: 0;
 }
 
 svg {
-  width: 80vmin;
+  height: 100%;
+  width: auto;
+  max-width: 97vmin;
   overflow: visible;
+  transform-origin: center;
 }
 
-path {
-  opacity: 0.1;
+/* Desktop: mostrar todo pero reloj ocupa 100dvh inicial */
+@media (min-width: 601px) {
+  section:has(svg) {
+    min-height: 100dvh;
+    flex: none;
+  }
 }
 
-.dg :is(.cr.string, .cr.number) input[type="text"] {
-  color: white;
-  line-height: 1;
+/* ── Mobile: reloj anclado al ancho del dispositivo ────── */
+@media (max-width: 600px) {
+  body {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  section:has(svg) {
+    flex: none;
+  }
+  svg {
+    width: 97vw;
+    height: auto;
+    max-width: none;
+  }
+  section:has(.animation-control),
+  section:has(.text-center) {
+    display: flex;
+  }
 }
 
-/*
-* The whole dial spins as a single rigid group, so every ring shares one
-* animation and can never drift out of phase with the others.
-*/
-svg {
-  -webkit-transform-origin: center;
-  -ms-transform-origin: center;
-      transform-origin: center;
-  -webkit-animation-name: spinning;
-          animation-name: spinning;
-  -webkit-animation-duration: 150s;
-          animation-duration: 150s;
-  -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-          animation-timing-function: linear;
+/* ── Retícula radial ──────────────────────────────────────── */
+
+#radial-grid {
+  pointer-events: none;
 }
 
-/*
-* Anchor every ring to the viewBox centre (50,50). Without this, `center`
-* resolves against each element's own bounding box, so the rings would pivot
-* around different points and slide out of alignment.
-*/
-svg > * {
-  -webkit-transform-box: view-box;
-          transform-box: view-box;
-  -webkit-transform-origin: 50% 50%;
-      -ms-transform-origin: 50% 50%;
-          transform-origin: 50% 50%;
+/* Base para todas las líneas */
+#radial-grid line {
+  stroke-width: 0.4px;
+  vector-effect: non-scaling-stroke;
 }
 
-text {
-  /* -webkit-transform-origin: center;
-      -ms-transform-origin: center;
-          transform-origin: center;
-  -webkit-animation-name: spinning;
-          animation-name: spinning;
-  -webkit-animation-duration: 60s;
-          animation-duration: 60s;
-  -webkit-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-  -webkit-animation-timing-function: linear;
-          animation-timing-function: linear; */
-  -webkit-transition: all;
-  -o-transition: all;
-  transition: all;
-  transform: rotate(0deg);
-  -webkit-transform: rotate(0deg);
-  -ms-transform: rotate(0deg);
+/* Líneas regulares: degradado dorado desde el centro */
+#radial-grid .grid-fade {
+  stroke: url(#grid-fade);
+  stroke-opacity: 0.5;
 }
 
-#text-1 {
-  fill: var(--text-1);
+/* Separadores de 5: dorado desvanecido, más grueso */
+#radial-grid .axis-five {
+  stroke: url(#grid-fade);
+  stroke-width: 0.7px;
 }
-#text-2 {
-  fill: var(--text-2);
+
+/* Separadores de 0 (ejes cardinales): dorado brillante desvanecido */
+#radial-grid .axis-zero {
+  stroke: url(#grid-fade);
+  stroke-width: 1.2px;
 }
-#text-3 {
-  fill: var(--text-3);
+
+/* ── Segmentos internos: cuatro casillas por segmento ────── */
+
+.segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
 }
-#text-4 {
-  fill: var(--text-4);
+
+.segment-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
 }
-#text-5 {
-  fill: var(--text-5);
+
+/* ── Círculos de banda ────────────────────────────────────── */
+
+.band-circle {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.32px;
+  stroke-opacity: 0.7;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
 }
-#text-6 {
-  fill: var(--text-6);
+
+/* Banda principal: mismo trazo visual que los mini-círculos (sin non-scaling-stroke) */
+.band-circle.main-band {
+  stroke-width: 0.32px;
+  stroke-opacity: 1;
+  vector-effect: none;
+}
+
+/* Anillo 2: banda de cuadrantes */
+.band-circle.ring2-band {
+  stroke-width: 0.32px;
+  stroke-opacity: 1;
+  vector-effect: none;
+}
+
+/* ── Anillo 2: 4 segmentos grandes ─────────────────────────── */
+
+.ring2-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring2-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: none;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.ring2-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+/* ── Anillo 4: segmento grande ──────────────────────────── */
+
+.ring4-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring4-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.ring4-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+.ring5-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring5-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.ring5-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+.ring6-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring6-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.ring6-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+.ring7-arc {
+  fill: none;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  stroke-opacity: 1;
+  vector-effect: none;
+  pointer-events: none;
+}
+
+.ring7-segment {
+  fill: #000;
+  fill-opacity: 0.2;
+  stroke: var(--gold-line);
+  stroke-width: 0.16px;
+  pointer-events: fill;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+/* ── Interactividad ─────────────────────────────────────── */
+
+.digit-cell,
+#ring-digits text {
+  transition: opacity 0.4s;
+}
+
+.seg-dimmed {
+  opacity: 0.08 !important;
+}
+
+.digit-dim {
+  opacity: 0.12 !important;
+}
+
+.digit-lit {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 0.8px var(--gold-bright));
+}
+
+.decomp-text {
+  opacity: 0;
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 1.275px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.decomp-text.decomp-visible {
+  opacity: 0.85;
+}
+
+.ring7-label {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  fill: var(--gold-bright);
+  pointer-events: none;
+}
+
+/* ── Anillo 1: 60 mini-círculos con valores Fibonacci ────── */
+
+.digit-cell {
+  fill: #060f28;
+  stroke: var(--gold-line);
+  stroke-width: 0.2px;
+  opacity: 0.2;
+}
+
+#ring-digits text {
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 2.5px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.fib-zero {
+  fill: var(--gold-bright);
+}
+
+.fib-five {
+  fill: var(--gold-bright);
+}
+
+.fib-digit {
+  fill: var(--digit);
+}
+
+/* ── Controles ────────────────────────────────────────────── */
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  min-height: 44px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.control-label {
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 0.7rem;
+  color: var(--gold-line);
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.animation-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.orient-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.orient-btn {
+  padding: 6px 16px;
+  background: #0a1628;
+  color: var(--gold-line);
+  border: 1px solid #444;
+  font-size: 0.75rem;
+  font-family: "EB Garamond", Georgia, serif;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, border-color 150ms;
+}
+
+.orient-btn:first-child {
+  border-radius: 999px 0 0 999px;
+  border-right: none;
+}
+
+.orient-btn:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.orient-btn:hover {
+  border-color: var(--gold-line);
+  color: var(--gold-bright);
+}
+
+.orient-btn.active {
+  background: #1a2a0a;
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+
+.anim-btn {
+  padding: 6px 16px;
+  background: #0a1628;
+  color: var(--gold-line);
+  border: 1px solid #444;
+  font-size: 0.75rem;
+  font-family: "EB Garamond", Georgia, serif;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, border-color 150ms;
+}
+
+.anim-btn:first-child {
+  border-radius: 999px 0 0 999px;
+  border-right: none;
+}
+
+.anim-btn:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.anim-btn:hover {
+  border-color: var(--gold-line);
+  color: var(--gold-bright);
+}
+
+.anim-btn.active {
+  background: #1a2a0a;
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+
+.animation-control input:focus-visible + .switch-track {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+/* ── Tipografía general ───────────────────────────────────── */
+
+h1, h5 {
+  font-family: "Cinzel", Georgia, serif;
+}
+
+h1 {
+  color: var(--gold-bright);
+  text-align: center;
+  margin: 0.2rem 0 0.1rem;
+  letter-spacing: 0.08em;
+}
+
+h5 {
+  text-align: center;
+  color: var(--gold-line);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  margin: 0 0 0.2rem;
 }
 
 .text-center {
   text-align: center;
+  color: var(--gold-line);
+  opacity: 0.7;
 }
 
-@-webkit-keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
+.text-center.copyright {
+  opacity: 0.4;
+  font-size: 0.85rem;
 }
 
-@keyframes spinning {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
-}
+a { color: var(--gold-bright); }
 
-h1 {
-  color: white;
-  text-align: center;
-  margin-bottom: 5px;
+/* Anclar transform-origin al centro del viewBox */
+svg > * {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
 }
-h5 {
-  text-align: center;
-  color: grey;
-}
-
-.chrome-only {
-  display: none;
-}
-.mobile-safari-only {
-  display: none;
-}
-.safari-only {
-  display: none;
-}
-
-/*@supports(-webkit-tap-highlight-color: black) {*/
-/*  !* Matches Edge 12 - latest (92) *!*/
-/*  !* Matches Chrome 16 - latest (95) *!*/
-/*  !* Matches Opera 15 - latest (78) *!*/
-
-/*  !* does not match Safari *!*/
-/*  !* does not match Firefox *!*/
-/*  .chrome-only {*/
-/*    display: inline;*/
-/*  }*/
-/*  .safari-only {*/
-/*    display: none;*/
-/*  }*/
-/*}*/

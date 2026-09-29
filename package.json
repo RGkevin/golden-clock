@@ -1,11 +1,11 @@
 {
   "name": "golden-clock",
   "version": "0.2.4",
-  "description": "The Golden Clock - Kevin López",
+  "description": "El Reloj Áureo - Kevin López",
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "http-server -o ./"
+    "start": "live-server ./"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,6 @@
   },
   "homepage": "https://github.com/RGkevin/golden-clock#readme",
   "dependencies": {
-    "http-server": "^14.1.1"
+    "live-server": "^1.2.2"
   }
 }
