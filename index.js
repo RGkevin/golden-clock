@@ -34,6 +34,15 @@ function mk(tag) { return document.createElementNS(svgNS, tag); }
 // En CW el índice i muestra el valor que en CCW estaba en (60-i)%60
 const fibAt = i => fib[direction === -1 ? (60 - i) % 60 : i];
 
+// Refleja un rango [start, end) al espejo angular cuando la dirección es CW
+function adjustedRange(startIdx, endIdx) {
+  if (direction === 1) return [startIdx, endIdx];
+  const span = endIdx - startIdx;
+  const lastPos = (startIdx + span - 1) % 60;
+  const newStart = (60 - lastPos + 60) % 60;
+  return [newStart, newStart + span];
+}
+
 // Suma de dígitos Fibonacci en un rango (soporta wrap)
 function rangeSum(startIdx, endIdx) {
   let s = 0;
@@ -314,19 +323,20 @@ function renderClock() {
   const RING4_OUT = 26;
   const RING4_MID = (RING4_IN + RING4_OUT) / 2;
 
-  const ring4Seg = { startIdx: 16, endIdx: 45 };
+  const [r4s, r4e] = adjustedRange(16, 45);
+  const ring4Seg = { startIdx: r4s, endIdx: r4e };
 
   const arc4 = mk('path');
-  arc4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
+  arc4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx % 60), posRad(ring4Seg.endIdx % 60), RING4_IN, RING4_OUT));
   arc4.setAttribute('class', 'ring4-arc');
   ring4Arcs.append(arc4);
 
   const segment4 = mk('path');
-  segment4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx), posRad(ring4Seg.endIdx), RING4_IN, RING4_OUT));
+  segment4.setAttribute('d', segmentPath(posRad(ring4Seg.startIdx % 60), posRad(ring4Seg.endIdx % 60), RING4_IN, RING4_OUT));
   segment4.setAttribute('class', 'ring4-segment');
   ring4Segments.append(segment4);
 
-  const labelAngle4 = posRad(ring4Seg.startIdx + (ring4Seg.endIdx - ring4Seg.startIdx) / 2);
+  const labelAngle4 = posRad((ring4Seg.startIdx + (ring4Seg.endIdx - ring4Seg.startIdx) / 2) % 60);
   const [x4, y4] = pt(RING4_MID, labelAngle4);
   const label4 = mk('text');
   label4.setAttribute('x', x4.toFixed(3));
@@ -346,19 +356,20 @@ function renderClock() {
   const RING5_OUT = 21;
   const RING5_MID = (RING5_IN + RING5_OUT) / 2;
 
-  const ring5Seg = { startIdx: 31, endIdx: 60 };
+  const [r5s, r5e] = adjustedRange(31, 60);
+  const ring5Seg = { startIdx: r5s, endIdx: r5e };
 
   const arc5 = mk('path');
-  arc5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
+  arc5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx % 60), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
   arc5.setAttribute('class', 'ring5-arc');
   ring5Arcs.append(arc5);
 
   const segment5 = mk('path');
-  segment5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
+  segment5.setAttribute('d', segmentPath(posRad(ring5Seg.startIdx % 60), posRad(ring5Seg.endIdx % 60), RING5_IN, RING5_OUT));
   segment5.setAttribute('class', 'ring5-segment');
   ring5Segments.append(segment5);
 
-  const labelAngle5 = posRad(ring5Seg.startIdx + (ring5Seg.endIdx - ring5Seg.startIdx) / 2);
+  const labelAngle5 = posRad((ring5Seg.startIdx + (ring5Seg.endIdx - ring5Seg.startIdx) / 2) % 60);
   const [x5, y5] = pt(RING5_MID, labelAngle5);
   const label5 = mk('text');
   label5.setAttribute('x', x5.toFixed(3));
@@ -378,19 +389,20 @@ function renderClock() {
   const RING6_OUT = 16;
   const RING6_MID = (RING6_IN + RING6_OUT) / 2;
 
-  const ring6Seg = { startIdx: 46, endIdx: 75 };
+  const [r6s, r6e] = adjustedRange(46, 75);
+  const ring6Seg = { startIdx: r6s, endIdx: r6e };
 
   const arc6 = mk('path');
-  arc6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
+  arc6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx % 60), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
   arc6.setAttribute('class', 'ring6-arc');
   ring6Arcs.append(arc6);
 
   const segment6 = mk('path');
-  segment6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
+  segment6.setAttribute('d', segmentPath(posRad(ring6Seg.startIdx % 60), posRad(ring6Seg.endIdx % 60), RING6_IN, RING6_OUT));
   segment6.setAttribute('class', 'ring6-segment');
   ring6Segments.append(segment6);
 
-  const labelAngle6 = posRad(ring6Seg.startIdx + (ring6Seg.endIdx - ring6Seg.startIdx) / 2);
+  const labelAngle6 = posRad((ring6Seg.startIdx + (ring6Seg.endIdx - ring6Seg.startIdx) / 2) % 60);
   const [x6, y6] = pt(RING6_MID, labelAngle6);
   const label6 = mk('text');
   label6.setAttribute('x', x6.toFixed(3));
@@ -410,7 +422,8 @@ function renderClock() {
   const RING7_OUT = 11;
   const RING7_MID = (RING7_IN + RING7_OUT) / 2;
 
-  const ring7Seg = { startIdx: 61, endIdx: 90 };
+  const [r7s, r7e] = adjustedRange(61, 90);
+  const ring7Seg = { startIdx: r7s, endIdx: r7e };
 
   const arc7 = mk('path');
   arc7.setAttribute('d', segmentPath(posRad(ring7Seg.startIdx % 60), posRad(ring7Seg.endIdx % 60), RING7_IN, RING7_OUT));
