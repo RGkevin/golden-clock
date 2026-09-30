@@ -71,10 +71,10 @@ $$
 
 Para el módulo 10, el período es 60. Esto significa que los últimos dígitos de la sucesión de Fibonacci se repiten cada 60 términos.
 
-**Definición 3 (raíz digital).** Para un entero $n \geq 1$, la raíz digital $\operatorname{rd}(n)$ se obtiene sumando sus dígitos repetidamente hasta obtener un solo dígito. Para los múltiplos positivos de 9, el resultado es 9, no 0. De forma equivalente:
+**Definición 3 (raíz digital).** Para un entero $n \geq 1$, la raíz digital $\mathrm{rd}(n)$ se obtiene sumando sus dígitos repetidamente hasta obtener un solo dígito. Para los múltiplos positivos de 9, el resultado es 9, no 0. De forma equivalente:
 
 $$
-\operatorname{rd}(n) =
+\mathrm{rd}(n) =
 \begin{cases}
 9 & \text{si } n \equiv 0 \pmod{9}, \\
 n \bmod 9 & \text{en otro caso}.
@@ -129,7 +129,7 @@ La sucesión filtrada conserva el orden original. Los guiones indican las posici
 **Definición 5.** Se divide $S'$ en 12 grupos consecutivos $G_1, \ldots, G_{12}$ de 4 elementos cada uno. Para cada grupo, se calcula:
 
 $$
-a_i = \operatorname{rd}\left(\sum_{x \in G_i} x\right)
+a_i = \mathrm{rd}\left(\sum_{x \in G_i} x\right)
 $$
 
 La suma incluye todos los elementos del grupo, también los repetidos.
@@ -160,7 +160,7 @@ $$
 **Definición 6.** Se divide $A$ en 4 grupos consecutivos $H_1, H_2, H_3, H_4$ de 3 elementos cada uno. Para cada grupo, se calcula:
 
 $$
-b_j = \operatorname{rd}\left(\sum_{x \in H_j} x\right)
+b_j = \mathrm{rd}\left(\sum_{x \in H_j} x\right)
 $$
 
 | Grupo | Elementos | Suma y reducción | Raíz digital |
@@ -194,9 +194,9 @@ $$
 $$
 \begin{aligned}
 Y_1 &= C_1 = \mathbf{10} \\
-Y_2 &= \operatorname{rd}(C_2) = 1 + 4 = \mathbf{5} \\
-Y_3 &= \operatorname{rd}(C_3) = 1 + 5 = \mathbf{6} \\
-Y_4 &= \operatorname{rd}(C_4) = 2 + 3 = \mathbf{5}
+Y_2 &= \mathrm{rd}(C_2) = 1 + 4 = \mathbf{5} \\
+Y_3 &= \mathrm{rd}(C_3) = 1 + 5 = \mathbf{6} \\
+Y_4 &= \mathrm{rd}(C_4) = 2 + 3 = \mathbf{5}
 \end{aligned}
 $$
 
